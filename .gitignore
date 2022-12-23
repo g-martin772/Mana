@@ -8,4 +8,4 @@ int/
 *.sln
 *.user
 *.vcxproj
-
+*filters

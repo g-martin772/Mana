@@ -29,6 +29,7 @@ project "Mana-Engine"
     includedirs {
         "",
         "src",
+        "vendor/spdlog/include",
     }
 
     links{

@@ -1,11 +1,14 @@
 #include "manapch.h"
 #include "Application.h"
 
+#include "Core/Log.h"
+
 #include <iostream>
 
 namespace Mana {
 	ManaApplication::ManaApplication()
 	{
+		Log::Init();
 	}
 
 	ManaApplication::~ManaApplication()
@@ -14,6 +17,9 @@ namespace Mana {
 
 	void ManaApplication::Run()
 	{
-		std::cout << "Hello from the engine" << std::endl;
+		MANA_CORE_INFO("SomeText");
+		MANA_CORE_TRACE("SomeText");
+		MANA_CORE_WARN("SomeText");
+		MANA_CORE_ERROR("SomeText");
 	}
 }

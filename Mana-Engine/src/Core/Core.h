@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #ifdef MANA_PLATFORM_WINDOWS
 	#if MANA_DLL_EXPORT
 		#define MANA_API __declspec(dllexport)
@@ -11,3 +13,11 @@
 #else
 	#error Mana only supports windows right now
 #endif
+
+namespace Mana {
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+
+	template<typename T>
+	using Scope = std::unique_ptr<T>;
+}
