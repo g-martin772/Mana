@@ -1,0 +1,3 @@
+[submodule "Mana-Engine/vendor/spdlog"]
+	path = Mana-Engine/vendor/spdlog
+	url = https://github.com/gabime/spdlog

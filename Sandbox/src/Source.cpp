@@ -1,11 +1,9 @@
 #include "Mana.h"
 
-#include <iostream>
-
 class Sandbox : public Mana::ManaApplication {
 public:
 	Sandbox() {
-		std::cout << "Hello from the sandbox" << std::endl;
+		MANA_TRACE("Some Client Text");
 	}
 
 	~Sandbox() {
