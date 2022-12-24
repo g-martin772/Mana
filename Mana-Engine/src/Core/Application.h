@@ -11,6 +11,7 @@ namespace Mana {
 		void Run();
 	private:
 		Ref<Window> m_Window;
+		bool m_Running = true;
 	};
 
 	ManaApplication* CreateApplication(char** argv, int argc);
