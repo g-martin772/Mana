@@ -11,7 +11,7 @@ workspace "Mana"
     }
 
 group "Dependencies"
-    
+    include "Mana-Engine/vendor/glfw"
 group ""
 
 include "Mana-Engine"

@@ -30,10 +30,12 @@ project "Mana-Engine"
         "",
         "src",
         "vendor/spdlog/include",
+        "vendor/glfw/include",
     }
 
-    links{
-
+    links {
+        "glfw",
+        "opengl32.lib"
     }
 
     -- filter "files:vendor/ImGuizmo/**.cpp"
