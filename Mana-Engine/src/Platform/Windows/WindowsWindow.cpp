@@ -26,6 +26,19 @@ namespace Mana {
 		}
 
 		glfwMakeContextCurrent(m_Window);
+
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+			MANA_CORE_ERROR("Failed to initialize OpenGL context");
+			return;
+		}
+
+		const char* renderer = (const char*)glGetString(GL_RENDERER);
+		const char* version = (const char*)glGetString(GL_VERSION);
+		const char* glslVersion = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+		MANA_CORE_INFO("Renderer       : {0}", renderer);
+		MANA_CORE_INFO("OpenGL Version : {0}", version);
+		MANA_CORE_INFO("GLSL Version   : {0}", glslVersion);
 	}
 
 	void WindowsWindow::Shutdown()
