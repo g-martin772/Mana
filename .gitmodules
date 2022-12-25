@@ -1,3 +1,6 @@
 [submodule "Mana-Engine/vendor/spdlog"]
 	path = Mana-Engine/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Mana-Engine/vendor/glfw"]
+	path = Mana-Engine/vendor/glfw
+	url = https://github.com/g-martin772/glfw.git

@@ -3,12 +3,11 @@
 
 #include "Core/Log.h"
 
-#include <iostream>
-
 namespace Mana {
 	ManaApplication::ManaApplication()
 	{
 		Log::Init();
+		m_Window = Window::Create("Mana-Engine", 1280, 720);
 	}
 
 	ManaApplication::~ManaApplication()
@@ -17,9 +16,9 @@ namespace Mana {
 
 	void ManaApplication::Run()
 	{
-		MANA_CORE_INFO("SomeText");
-		MANA_CORE_TRACE("SomeText");
-		MANA_CORE_WARN("SomeText");
-		MANA_CORE_ERROR("SomeText");
-	}
+		while (m_Running)
+		{
+			m_Window->OnUpdate();
+		}
+	} 
 }
