@@ -67,6 +67,16 @@ namespace Mana {
 		return Vec2(this->divide(other));
 	}
 
+	bool Vec2::operator==(const Vec2& other) const
+	{
+		return this->x == other.x && this->y == other.y;
+	}
+
+	bool Vec2::operator!=(const Vec2& other) const
+	{
+		return !(*this == other);
+	}
+
 	void Vec2::operator+=(Vec2& other)
 	{
 		this->add(other);

@@ -79,6 +79,16 @@ namespace Mana {
 		return Vec4(this->divide(other));
 	}
 
+	bool Vec4::operator==(const Vec4& other) const
+	{
+		return this->x == other.x && this->y == other.y && this->z == other.z && this->w == other.w;
+	}
+
+	bool Vec4::operator!=(const Vec4& other) const
+	{
+		return !(*this == other);
+	}
+
 	void Vec4::operator+=(Vec4& other)
 	{
 		this->add(other);

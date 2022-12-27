@@ -20,6 +20,9 @@ namespace Mana {
 		Vec2 operator*(Vec2& other);
 		Vec2 operator/(Vec2& other);
 
+		bool operator==(const Vec2& other) const;
+		bool operator!=(const Vec2& other) const;
+
 		void operator+=(Vec2& other);
 		void operator-=(Vec2& other);
 		void operator*=(Vec2& other);

@@ -19,6 +19,9 @@ namespace Mana {
 		Vec4 operator-(Vec4& other);
 		Vec4 operator*(Vec4& other);
 		Vec4 operator/(Vec4& other);
+		
+		bool operator==(const Vec4& other) const;
+		bool operator!=(const Vec4& other) const;
 
 		void operator+=(Vec4& other);
 		void operator-=(Vec4& other);
