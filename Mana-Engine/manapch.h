@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Log.h"
+#include "Math/Math.h"
 
 #include <memory>
 #include <string>
