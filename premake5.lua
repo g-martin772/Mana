@@ -13,6 +13,7 @@ workspace "Mana"
 group "Dependencies"
     include "Mana-Engine/vendor/glfw"
     include "Mana-Engine/vendor/glad"
+    include "Mana-Engine/vendor/entt"
 group ""
 
 include "Mana-Engine"
