@@ -4,3 +4,6 @@
 [submodule "Mana-Engine/vendor/glfw"]
 	path = Mana-Engine/vendor/glfw
 	url = https://github.com/g-martin772/glfw.git
+[submodule "Mana-Engine/vendor/entt"]
+	path = Mana-Engine/vendor/entt
+	url = https://github.com/g-martin772/entt.git

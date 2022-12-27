@@ -32,6 +32,7 @@ project "Mana-Engine"
         "vendor/spdlog/include",
         "vendor/glfw/include",
         "vendor/glad/include",
+        "vendor/entt/single_include",
     }
 
     links {
@@ -39,15 +40,6 @@ project "Mana-Engine"
         "opengl32.lib",
         "glad"
     }
-
-    -- filter "files:vendor/ImGuizmo/**.cpp"
-    -- flags { "NoPCH" }
-
-    -- filter "files:vendor/glm/glm/**.cpp"
-    -- flags { "NoPCH" }
-
-    -- filter "files:vendor/glm/glm/**.hpp"
-    -- flags { "NoPCH" }
 
     filter "system:windows"
         systemversion "latest"

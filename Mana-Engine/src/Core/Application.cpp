@@ -4,6 +4,9 @@
 #include "Core/Log.h"
 #include "Math/Math.h"
 
+#include "Scene/Scene.h"
+#include "Scene/Components/BasicComponents.h"
+
 namespace Mana {
 	ManaApplication::ManaApplication()
 	{
@@ -16,6 +19,10 @@ namespace Mana {
 		vec += vec;
 
 		MANA_CORE_TRACE("x: {0} y: {1}", vec.x, vec.y);
+
+		Scene scene;
+
+		Entity entity = scene.CreateEntity();
 	}
 
 	ManaApplication::~ManaApplication()
