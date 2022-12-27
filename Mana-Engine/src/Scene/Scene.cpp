@@ -7,14 +7,14 @@
 
 namespace Mana {
 	Entity Scene::CreateEntity() {
-		Entity entity(registry.create(), registry);
-		entity.addComponent<IDComponent>();
-		entity.addComponent<TagComponent>();
-		entity.addComponent<TransformComponent>();
+		Entity entity(m_Registry.create(), m_Registry);
+		entity.AddComponent<IDComponent>();
+		entity.AddComponent<TagComponent>();
+		entity.AddComponent<TransformComponent>();
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity) {
-		registry.destroy(entity.handle);
+		m_Registry.destroy(entity.m_EntityHandle);
 	}
 }

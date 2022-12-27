@@ -10,7 +10,9 @@ namespace Mana {
 	public:
 		Entity CreateEntity();
 		void DestroyEntity(Entity entity);
+
+		const entt::registry& GetRegistry() const { return m_Registry; }
 	private:
-		entt::registry registry;
+		entt::registry m_Registry;
 	};
 }

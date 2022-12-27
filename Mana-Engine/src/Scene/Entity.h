@@ -11,39 +11,40 @@ namespace Mana {
 	{
 	public:
 		template <typename T>
-		T& getComponent()
+		T& GetComponent() const
 		{
-			return registry.get<T>(handle);
+			return m_Registry.get<T>(m_EntityHandle);
 		}
 
 		template <typename T>
-		bool hasComponent()
+		bool HasComponent() const
 		{
-			return registry.has<T>(handle);
+			return m_Registry.has<T>(m_EntityHandle);
 		}
 
 		template <typename T, typename... Args>
-		T& addComponent(Args&&... args)
+		T& AddComponent(Args&&... args) const
 		{
-			return registry.emplace<T>(handle, std::forward<Args>(args)...);
+			return m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 		}
 
 		template <typename T>
-		void removeComponent()
+		void RemoveComponent() const
 		{
-			registry.remove<T>(handle);
+			m_Registry.remove<T>(m_EntityHandle);
 		}
 
 	private:
 		Entity(entt::entity handle, entt::registry& registry)
-			: handle(handle), registry(registry)
+			: m_EntityHandle(handle), m_Registry(registry)
 		{
 		}
 
 	private:
-		entt::entity handle;
-		entt::registry& registry;
+		entt::entity m_EntityHandle;
+		entt::registry& m_Registry;
 		
+		// Instances of the Entity class can only be created by the scene, also containing the ecs registry
 		friend class Scene;
 	};
 }
