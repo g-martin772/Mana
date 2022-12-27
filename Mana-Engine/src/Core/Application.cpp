@@ -2,12 +2,20 @@
 #include "Application.h"
 
 #include "Core/Log.h"
+#include "Math/Math.h"
 
 namespace Mana {
 	ManaApplication::ManaApplication()
 	{
 		Log::Init();
 		m_Window = Window::Create("Mana-Engine", 1280, 720);
+
+		vec2 vec(5.0f, 2.0f);
+		vec.set({ 1.0f, 1.0f });
+		vec.add({ 0.0f, 0.0f });
+		vec += vec;
+
+		MANA_CORE_TRACE("x: {0} y: {1}", vec.x, vec.y);
 	}
 
 	ManaApplication::~ManaApplication()
@@ -20,5 +28,5 @@ namespace Mana {
 		{
 			m_Window->OnUpdate();
 		}
-	} 
+	}
 }

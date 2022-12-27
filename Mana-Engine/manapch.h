@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Log.h"
+#include "Math/Math.h"
 
 #include <memory>
 #include <string>
@@ -15,3 +16,5 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
+#include <cmath>
+#include <array>
