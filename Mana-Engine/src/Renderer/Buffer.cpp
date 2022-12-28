@@ -1,3 +1,5 @@
+// Credits to TheCherno for the great Buffer API
+
 #include "manapch.h"
 #include "Buffer.h"
 
