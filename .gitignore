@@ -2,6 +2,8 @@
 .vs/
 bin/
 int/
+__pycache__/
+vendor/premake/
 
 
 # Files
