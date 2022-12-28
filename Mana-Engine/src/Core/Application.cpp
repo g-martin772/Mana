@@ -12,17 +12,7 @@ namespace Mana {
 	{
 		Log::Init();
 		m_Window = Window::Create("Mana-Engine", 1280, 720);
-
-		vec2 vec(5.0f, 2.0f);
-		vec.set({ 1.0f, 1.0f });
-		vec.add({ 0.0f, 0.0f });
-		vec += vec;
-
-		MANA_CORE_TRACE("x: {0} y: {1}", vec.x, vec.y);
-
-		Scene scene;
-
-		Entity entity = scene.CreateEntity();
+		m_LayerStack = std::make_shared<LayerStack>();
 	}
 
 	ManaApplication::~ManaApplication()
@@ -34,6 +24,7 @@ namespace Mana {
 		while (m_Running)
 		{
 			m_Window->OnUpdate();
+			m_LayerStack->OnUpdate();
 		}
 	}
 }

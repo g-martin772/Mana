@@ -26,6 +26,7 @@ project "Sandbox"
         includedirs {
             "%{wks.location}/Mana-Engine/src",
             "%{wks.location}/Mana-Engine/vendor/spdlog/include",
+            "%{wks.location}/Mana-Engine/vendor/entt/single_include",
         }
 
         links{

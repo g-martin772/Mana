@@ -17,4 +17,9 @@ namespace Mana {
 	void Scene::DestroyEntity(Entity entity) {
 		m_Registry.destroy(entity.m_EntityHandle);
 	}
+
+	void Scene::OnUpdate()
+	{
+		MANA_CORE_TRACE("Updated Scene");
+	}
 }

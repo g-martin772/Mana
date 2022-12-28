@@ -32,7 +32,7 @@ namespace Mana {
 		vec3 Scale = { 0.0f, 0.0f, 0.0f };
 		vec3 Rotation = { 0.0f, 0.0f, 0.0f };
 
-		mat4 GetTransform() const {
+		mat4 GetTransform() {
 			return mat4::Translation(Position)
 				 * mat4::Rotation(Rotation.x, { 1.0f, 0.0f, 0.0f })
 				 * mat4::Rotation(Rotation.y, { 0.0f, 1.0f, 0.0f })

@@ -6,3 +6,11 @@
 
 #include "Core/Log.h"
 #include "Core/Window.h"
+#include "Core/Layer.h"
+
+#include "Math/Math.h"
+
+#include "Scene/Scene.h"
+#include "Scene/Entity.h"
+#include "Scene/Components/BasicComponents.h"
+#include "Scene/Components/2DComponents.h"

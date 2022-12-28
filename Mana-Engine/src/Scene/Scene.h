@@ -11,6 +11,8 @@ namespace Mana {
 		Entity CreateEntity();
 		void DestroyEntity(Entity entity);
 
+		void OnUpdate();
+
 		const entt::registry& GetRegistry() const { return m_Registry; }
 	private:
 		entt::registry m_Registry;
