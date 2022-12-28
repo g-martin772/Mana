@@ -4,6 +4,10 @@ workspace "Mana"
     startproject "Sandbox"
     architecture "x64"
 
+    flags {
+		"MultiProcessorCompile"
+	}
+
     configurations {
         "Debug",
         "Resease",

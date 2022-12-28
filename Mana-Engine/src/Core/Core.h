@@ -21,3 +21,6 @@ namespace Mana {
 	template<typename T>
 	using Scope = std::unique_ptr<T>;
 }
+
+#define MANA_ASSERT(...)
+#define MANA_CORE_ASSERT(...) 

@@ -29,10 +29,14 @@ project "Mana-Engine"
     includedirs {
         "",
         "src",
-        "vendor/spdlog/include",
-        "vendor/glfw/include",
-        "vendor/glad/include",
-        "vendor/entt/single_include",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.shaderc}",
+        "%{IncludeDir.SPIRV_Cross}",
+        "%{IncludeDir.VulkanSDK}",
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.spdlog}",
     }
 
     links {
@@ -40,6 +44,11 @@ project "Mana-Engine"
         "opengl32.lib",
         "glad"
     }
+
+    defines {
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
+	}
 
     filter "system:windows"
         systemversion "latest"
@@ -54,12 +63,30 @@ project "Mana-Engine"
         runtime "Debug"
         symbols "On"
 
+        links {
+			"%{Library.ShaderC_Debug}",
+			"%{Library.SPIRV_Cross_Debug}",
+			"%{Library.SPIRV_Cross_GLSL_Debug}"
+		}
+
     filter "configurations:Release"
         defines "MANA_RELEASE"
         runtime "Release"
         optimize "On"
 
+        links {
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}
+
     filter "configurations:Dist"
         defines "MANA_DIST"
         runtime "Release"
         optimize "On"
+
+        links {
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}
