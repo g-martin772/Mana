@@ -20,6 +20,6 @@ namespace Mana {
 
 	void Scene::OnUpdate()
 	{
-		MANA_CORE_TRACE("Updated Scene");
+
 	}
 }

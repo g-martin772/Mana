@@ -16,11 +16,11 @@ namespace Mana {
 			return m_Registry.get<T>(m_EntityHandle);
 		}
 
-		template <typename T>
+		/*template <typename T>
 		bool HasComponent() const
 		{
 			return m_Registry.has<T>(m_EntityHandle);
-		}
+		}*/
 
 		template <typename T, typename... Args>
 		T& AddComponent(Args&&... args) const

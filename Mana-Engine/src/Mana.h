@@ -14,3 +14,7 @@
 #include "Scene/Entity.h"
 #include "Scene/Components/BasicComponents.h"
 #include "Scene/Components/2DComponents.h"
+
+#include "Renderer/RenderCommand.h"
+#include "Renderer/Renderer.h"
+#include "Renderer/Renderer2D.h"

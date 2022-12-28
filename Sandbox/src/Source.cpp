@@ -2,18 +2,16 @@
 
 class AppLayer : public Mana::Layer {
 	void OnAttach() override {
-		MANA_TRACE("Attached");
 		m_Scene = std::make_shared<Mana::Scene>();
 	}
 	void OnDetach() override {
-		MANA_TRACE("Detached");
 	}
 	void OnUpdate() override {
-		MANA_TRACE("Updated");
 		m_Scene->OnUpdate();
+		Mana::RenderCommand::SetClearColor({ 0.0f, 1.0f, 1.0f, 1.0f });
+		Mana::RenderCommand::Clear();
 	}
 	void OnEvent() override {
-		MANA_TRACE("Event");
 	}
 private:
 	Mana::Ref<Mana::Scene>m_Scene;

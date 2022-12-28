@@ -7,11 +7,14 @@
 #include "Scene/Scene.h"
 #include "Scene/Components/BasicComponents.h"
 
+#include "Renderer/RenderCommand.h"
+
 namespace Mana {
 	ManaApplication::ManaApplication()
 	{
 		Log::Init();
 		m_Window = Window::Create("Mana-Engine", 1280, 720);
+		RenderCommand::Init();
 		m_LayerStack = std::make_shared<LayerStack>();
 	}
 
