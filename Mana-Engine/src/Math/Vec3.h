@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Vec4.h"
 
 namespace Mana {
 	template<class T>
@@ -10,44 +11,75 @@ namespace Mana {
 		T& g = y;
 		T& b = z;
 
+		Vec3() {}
 		Vec3(T x, T y, T z) : x(x), y(y), z(z) { }
 		~Vec3() = default;
 
-		void set(Vec3 other) {
+		void set(Vec3& other) {
 			this->x = other.x;
 			this->y = other.y;
 			this->z = other.z;
 		}
 
-		Vec3& add(Vec3 other) {
+		void set(Vec4<T>& other) {
+			this->x = other.x;
+			this->y = other.y;
+			this->z = other.z;
+		}
+
+		Vec3& add(Vec3& other) {
 			x += other.x;
 			y += other.y;
 			z += other.z;
 			return *this;
 		}
 
-		Vec3& substract(Vec3 other) {
+		Vec3& substract(Vec3& other) {
 			x -= other.x;
 			y -= other.y;
 			z -= other.z;
 			return *this;
 		}
 
-		Vec3& multiply(Vec3 other) {
+		Vec3& multiply(Vec3& other) {
 			x *= other.x;
 			y *= other.y;
 			z *= other.z;
 			return *this;
 		}
 
-		Vec3& divide(Vec3 other) {
+		Vec3& divide(Vec3& other) {
 			x /= other.x;
 			y /= other.y;
 			z /= other.z;
 			return *this;
 		}
 
+		T operator[](int i) {
+			switch (i)
+			{
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			default: return 0;
+			}
+		}
+
+		const T& operator[](int i) const {
+			switch (i)
+			{
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			default: return 0;
+			}
+		}
+
 		void operator=(Vec3& other) {
+			this->set(other);
+		}
+
+		void operator=(Vec4<T>& other) {
 			this->set(other);
 		}
 

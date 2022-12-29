@@ -9,7 +9,7 @@
 namespace Mana {
 	namespace Utils {
 
-		static GLenum ShaderTypeFromString(const std::string& type)
+		inline static GLenum ShaderTypeFromString(const std::string& type)
 		{
 			if (type == "vertex")
 				return GL_VERTEX_SHADER;
@@ -20,7 +20,7 @@ namespace Mana {
 			return 0;
 		}
 
-		static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
+		inline constexpr static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
 		{
 			switch (stage)
 			{
@@ -32,7 +32,7 @@ namespace Mana {
 			return (shaderc_shader_kind)0;
 		}
 
-		static const char* GLShaderStageToString(GLenum stage)
+		inline constexpr static const char* GLShaderStageToString(GLenum stage)
 		{
 			switch (stage)
 			{
@@ -44,19 +44,19 @@ namespace Mana {
 			return nullptr;
 		}
 
-		static const char* GetCacheDirectory()
+		inline constexpr static const char* GetCacheDirectory()
 		{
 			return "assets/cache/shader/opengl";
 		}
 
-		static void CreateCacheDirectoryIfNeeded()
+		inline static void CreateCacheDirectoryIfNeeded()
 		{
 			std::string cacheDirectory = GetCacheDirectory();
 			if (!std::filesystem::exists(cacheDirectory))
 				std::filesystem::create_directories(cacheDirectory);
 		}
 
-		static const char* GLShaderStageCachedOpenGLFileExtension(uint32_t stage)
+		inline constexpr static const char* GLShaderStageCachedOpenGLFileExtension(uint32_t stage)
 		{
 			switch (stage)
 			{
@@ -68,7 +68,7 @@ namespace Mana {
 			return "";
 		}
 
-		static const char* GLShaderStageCachedVulkanFileExtension(uint32_t stage)
+		inline constexpr static const char* GLShaderStageCachedVulkanFileExtension(uint32_t stage)
 		{
 			switch (stage)
 			{
@@ -97,7 +97,7 @@ namespace Mana {
 			CompileOrGetOpenGLBinaries();
 			CreateProgram();
 			auto duration = std::chrono::high_resolution_clock::now() - start;
-			MANA_CORE_WARN("Shader creation took {0} ms", duration.count());
+			MANA_CORE_WARN("Shader creation took {0} ms", duration.count() / 1000000);
 		}
 
 		auto lastSlash = path.find_last_of("/\\");
@@ -300,7 +300,7 @@ namespace Mana {
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					MANA_CORE_ERROR(module.GetErrorMessage());
-					MANA_CORE_ASSERT(false);
+					MANA_CORE_ASSERT(false, "");
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -361,7 +361,7 @@ namespace Mana {
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					MANA_CORE_ERROR(module.GetErrorMessage());
-					MANA_CORE_ASSERT(false);
+					MANA_CORE_ASSERT(false, "");
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());

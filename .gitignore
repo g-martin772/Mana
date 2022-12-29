@@ -3,6 +3,7 @@
 bin/
 int/
 __pycache__/
+cache/
 vendor/premake/
 
 

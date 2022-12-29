@@ -1,45 +1,83 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Vec3.h"
 
 namespace Mana {
 	template<class T>
 	struct MANA_API Vec2 {
 		T x, y;
 
+		Vec2() {}
 		Vec2(T x, T y) : x(x), y(y) { }
 		~Vec2() = default;
 
-		void set(Vec2 other) {
+		void set(Vec2& other) {
 			this->x = other.x;
 			this->y = other.y;
 		}
 
-		Vec2& add(Vec2 other) {
+		void set(Vec3<T>& other) {
+			this->x = other.x;
+			this->y = other.y;
+		}
+
+		void set(Vec4<T>& other) {
+			this->x = other.x;
+			this->y = other.y;
+		}
+
+		Vec2& add(Vec2& other) {
 			x += other.x;
 			y += other.y;
 			return *this;
 		}
 
-		Vec2& substract(Vec2 other) {
+		Vec2& substract(Vec2& other) {
 			x -= other.x;
 			y -= other.y;
 			return *this;
 		}
 
-		Vec2& multiply(Vec2 other) {
+		Vec2& multiply(Vec2& other) {
 			x *= other.x;
 			y *= other.y;
 			return *this;
 		}
 
-		Vec2& divide(Vec2 other) {
+		Vec2& divide(Vec2& other) {
 			x /= other.x;
 			y /= other.y;
 			return *this;
 		}
 
+		T operator[](int i) {
+			switch (i)
+			{
+			case 0: return x;
+			case 1: return y;
+			default: return 0;
+			}
+		}
+
+		const T& operator[](int i) const {
+			switch (i)
+			{
+			case 0: return x;
+			case 1: return y;
+			default: return 0;
+			}
+		}
+
 		void operator=(Vec2& other) {
+			this->set(other);
+		}
+
+		void operator=(Vec3<T>& other) {
+			this->set(other);
+		}
+
+		void operator=(Vec4<T>& other) {
 			this->set(other);
 		}
 

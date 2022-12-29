@@ -54,4 +54,20 @@ namespace Mana {
 		__debugbreak();
 		return nullptr;
 	}
+
+	Ref<VertexArray> VertexArray::Create()
+	{
+		switch (RenderAPI::GetAPI())
+		{
+		case RenderAPI::API::None:
+			MANA_CORE_ERROR("No Render API Selected");
+			return nullptr;
+		case RenderAPI::API::OpenGL:
+			return std::make_shared<OpenGLVertexArray>();
+		}
+
+		MANA_CORE_ERROR("Invalid Render API");
+		__debugbreak();
+		return nullptr;
+	}
 }

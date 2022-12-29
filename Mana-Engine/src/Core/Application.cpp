@@ -8,6 +8,7 @@
 #include "Scene/Components/BasicComponents.h"
 
 #include "Renderer/RenderCommand.h"
+#include "Renderer/Renderer2D.h"
 
 namespace Mana {
 	ManaApplication::ManaApplication()
@@ -15,6 +16,8 @@ namespace Mana {
 		Log::Init();
 		m_Window = Window::Create("Mana-Engine", 1280, 720);
 		RenderCommand::Init();
+		RenderCommand::SetViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
+		Renderer2D::Init();
 		m_LayerStack = std::make_shared<LayerStack>();
 	}
 

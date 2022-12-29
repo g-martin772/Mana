@@ -12,8 +12,8 @@ namespace Mana {
 		void Run();
 	protected:
 		Ref<LayerStack> m_LayerStack;
-	private:
 		Ref<Window> m_Window;
+	private:
 		bool m_Running = true;
 	};
 

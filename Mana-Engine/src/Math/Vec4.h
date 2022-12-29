@@ -10,6 +10,7 @@ namespace Mana {
 		T& g = y;
 		T& b = z;
 
+		Vec4() {}
 		Vec4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) { }
 		~Vec4() = default;
 
@@ -50,6 +51,28 @@ namespace Mana {
 			z /= other.z;
 			w /= other.w;
 			return *this;
+		}
+
+		T& operator[](int i) {
+			switch (i)
+			{
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			case 3: return w;
+			default: return 0;
+			}
+		}
+
+		const T& operator[](int i) const {
+			switch (i)
+			{
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			case 3: return w;
+			default: return 0;
+			}
 		}
 
 		void operator=(Vec4& other) {

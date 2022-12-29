@@ -18,15 +18,15 @@ namespace Mana {
 	class MANA_API mat4
 	{
 	public:
-		std::array<float, 16> elements;
+		float elements[16];
 
 		mat4() {}
 
 		mat4(float diag) {
-			elements = { diag, 0.0f, 0.0f, 0.0f,
-						 0.0f, diag, 0.0f, 0.0f,
-						 0.0f, 0.0f, diag, 0.0f,
-						 0.0f, 0.0f, 0.0f, diag };
+			elements[0] = diag;
+			elements[5] = diag;
+			elements[10] = diag;
+			elements[15] = diag;
 		}
 
 		static mat4 Identity() {
@@ -122,7 +122,7 @@ namespace Mana {
 					data[x + y * 4] = sum;
 				}
 			}
-			std::memcpy(elements.data(), data, 16 * sizeof(float));
+			std::memcpy(&elements[0], data, 16 * sizeof(float)); // TODO: Check
 
 			return *this;
 		}

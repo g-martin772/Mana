@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <ostream>
 
 #ifdef MANA_PLATFORM_WINDOWS
 	#if MANA_DLL_EXPORT
@@ -11,7 +12,7 @@
 		#define MANA_API
 	#endif
 #else
-	#error Mana only supports windows right now
+	static_assert Mana only supports windows right now
 #endif
 
 namespace Mana {
@@ -22,5 +23,14 @@ namespace Mana {
 	using Scope = std::unique_ptr<T>;
 }
 
-#define MANA_ASSERT(...)
-#define MANA_CORE_ASSERT(...) 
+#define MANA_ASSERT(expression, message) \
+    if (!(expression)) { \
+        std::cerr << "Assertion failed: " << message << std::endl; \
+        __debugbreak(); \
+    }
+
+#define MANA_CORE_ASSERT(expression, message) \
+    if (!(expression)) { \
+        std::cerr << "Assertion failed: " << message << std::endl; \
+        __debugbreak(); \
+    }
