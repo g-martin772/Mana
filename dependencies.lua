@@ -12,6 +12,7 @@ IncludeDir["shaderc"] = "%{wks.location}/Mana-Engine/vendor/shaderc/include"
 IncludeDir["SPIRV_Cross"] = "%{wks.location}/Mana-Engine/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["spdlog"] = "%{wks.location}/Mana-Engine/vendor/spdlog/include"
+IncludeDir["glm"] = "%{wks.location}/Mana-Engine/vendor/glm/include"
 
 LibraryDir = {}
 

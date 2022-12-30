@@ -15,7 +15,11 @@
 	static_assert Mana only supports windows right now
 #endif
 
+namespace glm {}
+
 namespace Mana {
+	using namespace glm;
+
 	template<typename T>
 	using Ref = std::shared_ptr<T>;
 

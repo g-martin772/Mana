@@ -2,7 +2,8 @@
 
 #include "Core/Core.h"
 #include "RenderAPI.h"
-#include "Math/Vec4.h"
+
+#include <glm/glm.hpp>
 
 namespace Mana {
 	class RenderCommand {

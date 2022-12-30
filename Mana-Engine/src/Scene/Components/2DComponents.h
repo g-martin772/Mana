@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Core.h"
-#include "Math/Vec4.h"
 
 namespace Mana {
 	struct MANA_API SpriteRendererComponent {

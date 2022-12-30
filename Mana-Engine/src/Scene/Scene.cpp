@@ -22,7 +22,7 @@ namespace Mana {
 
 	void Scene::OnUpdate()
 	{
-		Renderer2D::BeginScene();
+		Renderer2D::BeginScene(OrthographicCamera(-100, 100, -100, 100));
 
 		auto renderable = m_Registry.view<SpriteRendererComponent, TransformComponent>();
 		for (auto entity : renderable) {

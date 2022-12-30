@@ -37,6 +37,7 @@ project "Mana-Engine"
         "%{IncludeDir.VulkanSDK}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.spdlog}",
+        "%{IncludeDir.glm}",
     }
 
     links {

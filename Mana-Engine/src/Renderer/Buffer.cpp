@@ -70,4 +70,20 @@ namespace Mana {
 		__debugbreak();
 		return nullptr;
 	}
+	
+	Ref<UniformBuffer> UniformBuffer::Create(uint32_t size, uint32_t binding)
+	{
+		switch (RenderAPI::GetAPI())
+		{
+		case RenderAPI::API::None:
+			MANA_CORE_ERROR("No Render API Selected");
+			return nullptr;
+		case RenderAPI::API::OpenGL:
+			return std::make_shared<OpenGLUniformBuffer>(size, binding);
+		}
+
+		MANA_CORE_ERROR("Invalid Render API");
+		__debugbreak();
+		return nullptr;
+	}
 }

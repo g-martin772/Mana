@@ -2,10 +2,10 @@
 
 #include "Core/Core.h"
 
-#include "Math/Math.h"
-
 #include "Scene/Components/BasicComponents.h"
 #include "Scene/Components/2DComponents.h"
+
+#include "Camera.h"
 
 namespace Mana {
 	class MANA_API Renderer2D {
@@ -13,7 +13,7 @@ namespace Mana {
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene();
+		static void BeginScene(const Camera& camera);
 		static void EndScene();
 
 		static void DrawQuad(const mat4& transform, SpriteRendererComponent src);

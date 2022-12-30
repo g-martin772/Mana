@@ -7,3 +7,6 @@
 [submodule "Mana-Engine/vendor/entt"]
 	path = Mana-Engine/vendor/entt
 	url = https://github.com/g-martin772/entt.git
+[submodule "Mana-Engine/vendor/glm"]
+	path = Mana-Engine/vendor/glm
+	url = https://github.com/g-martin772/glm.git

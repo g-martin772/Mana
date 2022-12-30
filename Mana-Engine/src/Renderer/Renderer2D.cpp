@@ -26,6 +26,9 @@ namespace Mana {
 		uint32_t IndexCount = 0;
 		QuadVertex* VertexBufferBase = nullptr;
 		QuadVertex* VertexBufferPtr = nullptr;
+
+		Ref<UniformBuffer> CameraUniformBuffer;
+		mat4 ViewProjection;
 	};
 
 	static BatchData s_Data;
@@ -35,7 +38,7 @@ namespace Mana {
 		s_Data.VertexArray = VertexArray::Create();
 		s_Data.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
 		s_Data.VertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float3, "a_Pos" },
 			{ ShaderDataType::Float4, "a_Color"    }
 			});
 
@@ -66,6 +69,8 @@ namespace Mana {
 		s_Data.VertexPositions[1] = vec4{  0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.VertexPositions[2] = vec4{  0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.VertexPositions[3] = vec4{ -0.5f,  0.5f, 0.0f, 1.0f };
+
+		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(mat4), 0);
 	}
 	
 	void Renderer2D::Shutdown()
@@ -73,9 +78,11 @@ namespace Mana {
 		delete[] s_Data.VertexBufferBase;
 	}
 	
-	void Renderer2D::BeginScene()
+	void Renderer2D::BeginScene(const Camera& camera)
 	{
 		s_Data.Shader->Bind();
+		s_Data.ViewProjection = camera.GetViewProjection();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.ViewProjection, sizeof(mat4));
 		StartBatch();
 	}
 	
@@ -86,23 +93,23 @@ namespace Mana {
 
 	void Renderer2D::DrawQuad(const mat4& transform, SpriteRendererComponent src)
 	{
-		
-	}
-	
-	void Renderer2D::DrawQuad(TransformComponent tc, SpriteRendererComponent src)
-	{
 		constexpr size_t vertexCount = 4;
 
 		if (s_Data.IndexCount >= BatchData::MaxIndices)
 			NextBatch();
 
 		for (size_t i = 0; i < vertexCount; i++) {
-			s_Data.VertexBufferPtr->Position = tc.GetTransform() * s_Data.VertexPositions[i];
+			s_Data.VertexBufferPtr->Position = transform * s_Data.VertexPositions[i];
 			s_Data.VertexBufferPtr->Color = src.Color;
 			s_Data.VertexBufferPtr++;
 		}
 
 		s_Data.IndexCount += 6;
+	}
+	
+	void Renderer2D::DrawQuad(TransformComponent tc, SpriteRendererComponent src)
+	{
+		DrawQuad(tc.GetTransform(), src);
 	}
 	
 	void Renderer2D::StartBatch()

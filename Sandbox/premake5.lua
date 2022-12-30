@@ -27,6 +27,7 @@ project "Sandbox"
             "%{wks.location}/Mana-Engine/src",
             "%{IncludeDir.entt}",
             "%{IncludeDir.spdlog}",
+            "%{IncludeDir.glm}",
         }
 
         links{
