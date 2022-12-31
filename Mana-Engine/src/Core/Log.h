@@ -3,6 +3,7 @@
 #include "Core/Core.h"
 
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h"
 
 namespace Mana {
 	class MANA_API Log {

@@ -55,4 +55,20 @@ namespace Mana {
 				(*iterator)->OnUpdate();
 			}
 	}
+	
+	bool LayerStack::OnEvent(Event& e)
+	{
+		if (m_GUI.size() > 0)
+			for (auto& gui : m_GUI) {
+				if (gui->OnEvent(e))
+					return true;
+			}
+		if (m_Layers.size() > 0)
+			for (auto iterator = m_Layers.end(); iterator-- != m_Layers.begin(); ) {
+				if ((*iterator)->OnEvent(e))
+					return true;
+			}
+
+		return false;
+	}
 }

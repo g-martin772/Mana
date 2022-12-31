@@ -17,7 +17,10 @@ class AppLayer : public Mana::Layer {
 		//Mana::RenderCommand::SetClearColor({ 0.0f, 1.0f, 1.0f, 1.0f });
 		//Mana::RenderCommand::Clear();
 	}
-	void OnEvent() override {
+	bool OnEvent(Mana::Event& e) override {
+		MANA_TRACE(e);
+
+		return true;
 	}
 private:
 	Mana::Ref<Mana::Scene>m_Scene;

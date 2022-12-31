@@ -3,6 +3,10 @@
 #include "Core/Log.h"
 #include "Math/Math.h"
 
+#ifdef MANA_PLATFORM_WINDOWS
+#include <Windows.h>
+#endif
+
 #include <memory>
 #include <string>
 #include <sstream>
@@ -10,6 +14,7 @@
 #include <cstdint>
 #include <stdlib.h>
 #include <iostream>
+#include <sstream>
 #include <stdarg.h>
 #include <vector>
 #include <map>
@@ -21,6 +26,7 @@
 #include <filesystem>
 #include <chrono>
 #include <fstream>
+#include <functional>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

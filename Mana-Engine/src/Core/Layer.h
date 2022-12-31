@@ -2,7 +2,7 @@
 
 #include "Core/Core.h"
 
-#include <vector>
+#include "Core/Events/Event.h"
 
 namespace Mana {
 	class MANA_API Layer {
@@ -12,7 +12,7 @@ namespace Mana {
 		virtual void OnAttach() = 0;
 		virtual void OnDetach() = 0;
 		virtual void OnUpdate() = 0;
-		virtual void OnEvent() = 0;
+		virtual bool OnEvent(Event& e) = 0;
 	};
 
 	class MANA_API LayerStack {
@@ -26,6 +26,7 @@ namespace Mana {
 		void PopGUI();
 
 		void OnUpdate();
+		bool OnEvent(Event& e);
 	private:
 		std::vector<Layer*> m_Layers;
 		std::vector<Layer*> m_GUI;
