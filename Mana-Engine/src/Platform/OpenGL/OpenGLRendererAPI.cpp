@@ -53,6 +53,10 @@ namespace Mana {
 		MANA_CORE_INFO("OpenGL Version : {0}", version);
 	}
 
+	void OpenGLRenderAPI::Shutdown()
+	{
+	}
+
 	void OpenGLRenderAPI::Clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

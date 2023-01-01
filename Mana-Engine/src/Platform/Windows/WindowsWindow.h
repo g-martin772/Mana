@@ -3,7 +3,7 @@
 #include "Core/Core.h"
 #include "Core/Window.h"
 
-#include "glad/glad.h"
+#define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
 namespace Mana {
@@ -19,10 +19,18 @@ namespace Mana {
 
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
+
+		virtual void* GetNativeWindow() const override { return (void*)m_Window; }
+
+		void Invalidate();
+	private:
+		void InitVulkan();
+		void InitOpenGL();
+		void SetCalbacks();
 	private:
 		GLFWwindow* m_Window;
 		const char* m_Name;
-		uint32_t m_Width;
-		uint32_t m_Height;
+		int m_Width;
+		int m_Height;
 	};
 }

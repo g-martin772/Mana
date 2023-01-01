@@ -43,7 +43,7 @@ project "Mana-Engine"
     links {
         "glfw",
         "opengl32.lib",
-        "glad"
+        "glad",
     }
 
     defines {
@@ -53,6 +53,11 @@ project "Mana-Engine"
 
     filter "system:windows"
         systemversion "latest"
+
+        links {
+            "%{Library.Vulkan}",
+            "%{Library.VulkanUtils}",
+        }
 
         defines {
             "MANA_PLATFORM_WINDOWS",

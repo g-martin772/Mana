@@ -6,6 +6,9 @@
 #include "Core/Events/MouseEvents.h"
 #include "Core/Events/WindowEvents.h"
 #include "Core/Application.h"
+#include "Renderer/RenderAPI.h"
+
+#include "vulkan/vulkan.h"
 
 namespace Mana {
 
@@ -130,45 +133,7 @@ namespace Mana {
 		}
 	}
 
-	// Window Implementation
-
-	WindowsWindow::WindowsWindow(const char* name, uint32_t width, uint32_t height)
-		: m_Name(name), m_Width(width), m_Height(height)
-	{
-		Init();
-	}
-
-	WindowsWindow::~WindowsWindow()
-	{
-		Shutdown();
-	}
-
-	void WindowsWindow::Init()
-	{
-		if (!glfwInit())
-			MANA_CORE_ERROR("Failed to initialize GLFW!");
-
-		m_Window = glfwCreateWindow(m_Width, m_Height, m_Name, NULL, NULL);
-
-		if (!m_Window) {
-			glfwTerminate();
-			MANA_CORE_ERROR("Failed to create GLFW Window!");
-		}
-
-		glfwMakeContextCurrent(m_Window);
-
-		glfwRequestWindowAttention(m_Window);
-		glfwMaximizeWindow(m_Window);
-
-		/*glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
-		glfwSetWindowOpacity(m_Window, 0.96f);*/
-
-		/*GLFWimage images[2];
-		images[0] = load_icon("my_icon.png");
-		images[1] = load_icon("my_icon_small.png");
-
-		glfwSetWindowIcon(m_Window, 2, images);*/
-
+	void WindowsWindow::SetCalbacks() {
 		if (glfwRawMouseMotionSupported())
 			glfwSetInputMode(m_Window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
@@ -186,9 +151,90 @@ namespace Mana {
 		glfwSetWindowFocusCallback(m_Window, window_focus_callback);
 	}
 
+	// Window Implementation
+
+	WindowsWindow::WindowsWindow(const char* name, uint32_t width, uint32_t height)
+		: m_Name(name), m_Width(width), m_Height(height)
+	{
+		Init();
+	}
+
+	WindowsWindow::~WindowsWindow()
+	{
+		Shutdown();
+	}
+
+	void WindowsWindow::Invalidate()
+	{
+		glfwGetWindowSize(m_Window, &m_Width, &m_Height);
+	}
+
+	void WindowsWindow::Init()
+	{
+		if (RenderAPI::GetAPI() == RenderAPI::API::OpenGL)
+			InitOpenGL();
+		else if (RenderAPI::GetAPI() == RenderAPI::API::Vulkan)
+			InitVulkan();
+		else
+			MANA_CORE_ASSERT(false, "RenderAPI not supported for platform Windows64x");
+
+		SetCalbacks();
+		RenderCommand::Init();
+		RenderCommand::SetViewport(0, 0, m_Width, m_Height);
+	}
+
+	void WindowsWindow::InitVulkan()
+	{
+		if (!glfwInit())
+			MANA_CORE_ASSERT(false, "Failed to initialize GLFW!");
+
+		if (!glfwVulkanSupported())
+			MANA_CORE_ASSERT(false, "Vulkan not supported for this device");
+
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		m_Window = glfwCreateWindow(m_Width, m_Height, m_Name, NULL, NULL);
+
+		if (!m_Window) {
+			glfwTerminate();
+			MANA_CORE_ASSERT(false, "Failed to create GLFW Window!");
+		}
+
+		uint32_t extensionCount = 0;
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+		std::vector<VkExtensionProperties> extensions(extensionCount);
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+
+		MANA_CORE_TRACE("{0} Vulkan Instance Extensions found", extensionCount);
+		for (const auto& extension : extensions) {
+			MANA_CORE_TRACE("\t {0}", extension.extensionName);
+		}
+		MANA_CORE_TRACE("");
+	}
+
+	void WindowsWindow::InitOpenGL()
+	{
+		if (!glfwInit())
+			MANA_CORE_ERROR("Failed to initialize GLFW!");
+
+		m_Window = glfwCreateWindow(m_Width, m_Height, m_Name, NULL, NULL);
+
+		if (!m_Window) {
+			glfwTerminate();
+			MANA_CORE_ERROR("Failed to create GLFW Window!");
+		}
+
+		glfwMakeContextCurrent(m_Window);
+
+		glfwRequestWindowAttention(m_Window);
+		glfwMaximizeWindow(m_Window);
+	}
+
 	void WindowsWindow::Shutdown()
 	{
+		glfwDestroyWindow(m_Window);
 		glfwTerminate();
+		RenderCommand::Shutdown();
 	}
 
 	void WindowsWindow::OnUpdate()

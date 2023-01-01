@@ -13,6 +13,10 @@ namespace Mana {
 			s_RenderAPI->Init();
 		}
 
+		inline static void Shutdown() {
+			s_RenderAPI->Shutdown();
+		}
+
 		inline static void SetClearColor(vec4 color) {
 			s_RenderAPI->SetClearColor(color);
 		}

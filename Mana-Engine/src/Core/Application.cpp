@@ -18,9 +18,7 @@ namespace Mana {
 		s_Instance = this;
 
 		m_Window = Window::Create("Mana-Engine", 1280, 720);
-		RenderCommand::Init();
-		RenderCommand::SetViewport(0, 0, m_Window->GetWidth(), m_Window->GetHeight());
-		Renderer2D::Init();
+		//Renderer2D::Init();
 		m_LayerStack = std::make_shared<LayerStack>();
 	}
 
