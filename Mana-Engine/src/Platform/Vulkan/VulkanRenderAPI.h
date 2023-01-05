@@ -20,7 +20,10 @@ namespace Mana {
 	private:
 		void CreateInstance();
 		bool CheckValidationLayerSupport();
+		void InitDebugMessanger();
+		std::vector<const char*> GetRequiredExtensions();
 	private:
 		VkInstance m_Instance;
+		VkDebugUtilsMessengerEXT m_DebugMessenger;
 	};
 }

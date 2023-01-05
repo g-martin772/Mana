@@ -232,9 +232,9 @@ namespace Mana {
 
 	void WindowsWindow::Shutdown()
 	{
+		RenderCommand::Shutdown();
 		glfwDestroyWindow(m_Window);
 		glfwTerminate();
-		RenderCommand::Shutdown();
 	}
 
 	void WindowsWindow::OnUpdate()
