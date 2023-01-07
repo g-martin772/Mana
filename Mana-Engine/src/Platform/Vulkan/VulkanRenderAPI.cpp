@@ -42,7 +42,7 @@ namespace Mana {
 		}
 
 		return VK_FALSE;
-	} 
+	}
 
 	static constexpr VkDebugUtilsMessengerCreateInfoEXT GetDebugMessangerInfo() {
 		VkDebugUtilsMessengerCreateInfoEXT createInfo{};
@@ -58,15 +58,19 @@ namespace Mana {
 	{
 		CreateInstance();
 		InitDebugMessanger();
+		PickPhysicalDevice();
+		CreateLogicalDevice();
 	}
 
 	void VulkanRenderAPI::Shutdown()
 	{
+		vkDestroyDevice(m_Device, nullptr);
+
 		if (enableValidationLayers) {
 			auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(m_Instance, "vkDestroyDebugUtilsMessengerEXT");
 			func(m_Instance, m_DebugMessenger, nullptr);
 		}
-		
+
 		vkDestroyInstance(m_Instance, nullptr);
 	}
 
@@ -156,6 +160,74 @@ namespace Mana {
 		MANA_CORE_ASSERT(result == VK_SUCCESS, "Failed to set up debug messanger");
 	}
 
+	void VulkanRenderAPI::PickPhysicalDevice()
+	{
+		uint32_t deviceCount = 0;
+		vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
+
+		MANA_CORE_ASSERT(deviceCount != 0, "No GPU with Vulkan support found!");
+
+		std::vector<VkPhysicalDevice> devices(deviceCount);
+		vkEnumeratePhysicalDevices(m_Instance, &deviceCount, devices.data());
+
+		for (const auto& device : devices) {
+			if (IsSuitableDevice(device)) {
+				m_PhysicalDevice = device;
+				break;
+			}
+		}
+
+		MANA_CORE_ASSERT(m_PhysicalDevice != VK_NULL_HANDLE, "No suitable GPU found!");
+
+	}
+
+	void VulkanRenderAPI::CreateLogicalDevice()
+	{
+		QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
+
+		VkDeviceQueueCreateInfo queueCreateInfo{};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = indices.GraphicsFamily.value();
+		queueCreateInfo.queueCount = 1;
+		float queuePriority = 1.0f;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+
+		VkPhysicalDeviceFeatures deviceFeatures{};
+
+		VkDeviceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.pQueueCreateInfos = &queueCreateInfo;
+		createInfo.queueCreateInfoCount = 1;
+		createInfo.pEnabledFeatures = &deviceFeatures;
+		createInfo.enabledExtensionCount = 0;
+
+		if (enableValidationLayers) {
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
+		}
+		else {
+			createInfo.enabledLayerCount = 0;
+		}
+
+		VkResult result = vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_Device);
+		MANA_CORE_ASSERT(result == VK_SUCCESS, "Failed to create logical Device!");
+
+		vkGetDeviceQueue(m_Device, indices.GraphicsFamily.value(), 0, &m_GraphicsQueue);
+	}
+
+	bool VulkanRenderAPI::IsSuitableDevice(VkPhysicalDevice device)
+	{
+		VkPhysicalDeviceProperties deviceProperties;
+		vkGetPhysicalDeviceProperties(device, &deviceProperties);
+		VkPhysicalDeviceFeatures deviceFeatures;
+		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+		QueueFamilyIndices indices = FindQueueFamilies(device);
+
+		return indices.IsComplete() &&
+			   deviceFeatures.geometryShader;
+	}
+
 	std::vector<const char*> VulkanRenderAPI::GetRequiredExtensions() {
 		uint32_t glfwExtensionCount = 0;
 		const char** glfwExtensions;
@@ -169,6 +241,36 @@ namespace Mana {
 
 		return extensions;
 	}
+
+	QueueFamilyIndices VulkanRenderAPI::FindQueueFamilies(VkPhysicalDevice device)
+	{
+		QueueFamilyIndices indices;
+		
+		uint32_t queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+		int i = 0;
+		for (const auto& queueFamily : queueFamilies) {
+			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+				indices.GraphicsFamily = i;
+			}
+
+			if (indices.IsComplete()) {
+				break;
+			}
+
+			i++;
+		}
+
+		return indices;
+	}
+
+
+
+	// Render Commands
 
 	void VulkanRenderAPI::Clear()
 	{
