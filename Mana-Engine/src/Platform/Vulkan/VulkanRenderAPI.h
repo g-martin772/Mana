@@ -43,6 +43,7 @@ namespace Mana {
 		void PickPhysicalDevice();
 		void CreateLogicalDevice();
 		void CreateSwapChain();
+		void CreateImageViews();
 		bool IsSuitableDevice(VkPhysicalDevice device);
 		bool CheckValidationLayerSupport();
 		std::vector<const char*> GetRequiredExtensions();
@@ -57,6 +58,7 @@ namespace Mana {
 		VkSurfaceKHR m_Surface;
 		VkSwapchainKHR m_SwapChain;
 		std::vector<VkImage> m_SwapChainImages;
+		std::vector<VkImageView> m_SwapChainImageViews;
 		VkFormat m_SwapChainImageFormat;
 		VkExtent2D m_SwapChainExtent;
 		VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
