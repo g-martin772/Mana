@@ -176,10 +176,10 @@ namespace Mana {
 		else if (RenderAPI::GetAPI() == RenderAPI::API::Vulkan)
 			InitVulkan();
 		else
-			MANA_CORE_ASSERT(false, "RenderAPI not supported for platform Windows64x");
+			MANA_CORE_ASSERT(false, "Selected RenderAPI not supported for Windows");
 
 		SetCalbacks();
-		RenderCommand::Init();
+		RenderCommand::Init((void*)m_Window);
 		RenderCommand::SetViewport(0, 0, m_Width, m_Height);
 	}
 
@@ -209,7 +209,6 @@ namespace Mana {
 		for (const auto& extension : extensions) {
 			MANA_CORE_TRACE("\t {0}", extension.extensionName);
 		}
-		MANA_CORE_TRACE("");
 	}
 
 	void WindowsWindow::InitOpenGL()

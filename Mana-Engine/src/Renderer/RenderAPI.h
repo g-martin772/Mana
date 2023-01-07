@@ -13,7 +13,7 @@ namespace Mana {
 			Vulkan
 		};
 	public:
-		virtual void Init() = 0;
+		virtual void Init(void* nativeWindow) = 0;
 		virtual void Shutdown() = 0;
 		virtual void Clear() = 0;
 		virtual void SetClearColor(vec4 color) = 0;

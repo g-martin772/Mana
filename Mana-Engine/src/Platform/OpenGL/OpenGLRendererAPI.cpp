@@ -25,7 +25,7 @@ namespace Mana {
 		MANA_CORE_ASSERT(false, "Unknown severity level!");
 	}
 
-	void OpenGLRenderAPI::Init()
+	void OpenGLRenderAPI::Init(void* nativeWindow)
 	{
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 			MANA_CORE_ERROR("Failed to initialize OpenGL context");

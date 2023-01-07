@@ -8,9 +8,9 @@
 namespace Mana {
 	class RenderCommand {
 	public:
-		inline static void Init() {
+		inline static void Init(void* nativeWindow) {
 			s_RenderAPI = RenderAPI::Create();
-			s_RenderAPI->Init();
+			s_RenderAPI->Init(nativeWindow);
 		}
 
 		inline static void Shutdown() {
