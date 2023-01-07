@@ -38,3 +38,9 @@ namespace Mana {
         std::cerr << "Assertion failed: " << message << std::endl; \
         __debugbreak(); \
     }
+
+#ifdef MANA_DEBUG
+	const constexpr bool enableValidationLayers = true;
+#else
+	const constexpr bool enableValidationLayers = false;
+#endif
