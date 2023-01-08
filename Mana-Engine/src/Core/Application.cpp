@@ -31,6 +31,8 @@ namespace Mana {
 		{
 			m_Window->OnUpdate();
 			m_LayerStack->OnUpdate();
+
+			RenderCommand::DrawIndexed(nullptr, 0);
 		}
 	}
 

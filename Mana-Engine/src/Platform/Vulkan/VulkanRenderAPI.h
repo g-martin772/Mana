@@ -3,10 +3,8 @@
 #include "Core/Core.h"
 #include "Renderer/RenderAPI.h"
 #include "Platform/Vulkan/VulkanDevice.h"
-
-#include <glm/glm.hpp>
-#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+#include "VulkanFrameBuffer.h"
+#include "VulkanPipeline.h"
 
 #include <optional>
 #include <set>
@@ -35,6 +33,7 @@ namespace Mana {
 	private:
 		void CreateInstance();
 		void InitDebugMessanger();
+		void CreateSyncObjects();
 		
 		bool CheckValidationLayerSupport();
 		std::vector<const char*> GetRequiredExtensions();
@@ -42,11 +41,16 @@ namespace Mana {
 		
 	private:
 		inline static VkInstance s_Instance;
+		VkDebugUtilsMessengerEXT m_DebugMessenger;
+
+		VkSemaphore m_ImageAvailableSemaphore;
+		VkSemaphore m_RenderFinishedSemaphore;
+		VkFence m_InFlightFence;
 
 		Ref<VulkanPhysicalDevice> m_PhysicalDevice = std::make_shared<VulkanPhysicalDevice>();
 		Ref<VulkanLogicalDevice> m_Device = std::make_shared<VulkanLogicalDevice>();
 		Ref<VulkanSwapChain> m_SwapChain = std::make_shared<VulkanSwapChain>();
-		
-		VkDebugUtilsMessengerEXT m_DebugMessenger;
+		Ref<VulkanPipeline> m_RenderPipeline = std::make_shared<VulkanPipeline>();
+		Ref<VulkanFrameBuffer> m_FrameBuffer = std::make_shared<VulkanFrameBuffer>();
 	};
 }

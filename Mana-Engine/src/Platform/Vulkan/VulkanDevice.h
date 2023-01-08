@@ -51,6 +51,8 @@ namespace Mana {
 
 		VkDevice GetDevice() const { return m_Device; }
 		const Ref<VulkanPhysicalDevice>& GetPhysicalDevice() const { return m_PhysicalDevice; }
+		VkQueue GetGraphicsQueue() const { return m_GraphicsQueue; }
+		VkQueue GetPresentQueue() const { return m_PresentQueue; }
 	private:
 		Ref<VulkanPhysicalDevice> m_PhysicalDevice;
 

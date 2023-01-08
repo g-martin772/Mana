@@ -71,7 +71,7 @@ namespace Mana {
 		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
 		// GetQueueFamilies
-		QueueFamilys indices = FindQueueFamilies(surface, device);
+		m_QueueFamilys = FindQueueFamilies(surface, device);
 
 
 		uint32_t extensionCount;
@@ -91,7 +91,7 @@ namespace Mana {
 			swapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentModes.empty();
 		}
 
-		return indices.IsComplete() &&
+		return m_QueueFamilys.IsComplete() &&
 			deviceFeatures.geometryShader &&
 			requiredExtensions.empty() &&
 			swapChainAdequate;

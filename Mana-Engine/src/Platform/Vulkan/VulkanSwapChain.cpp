@@ -1,6 +1,8 @@
 #include "manapch.h"
 #include "VulkanSwapChain.h"
 
+#include "VulkanRenderAPI.h"
+
 namespace Mana {
 	void VulkanSwapChain::Init(Ref<VulkanLogicalDevice> device)
 	{

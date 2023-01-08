@@ -3,6 +3,8 @@
 
 #include "Core/Application.h"
 
+#include "VulkanPipeline.h"
+
 namespace Mana {
 
 	// Debug
@@ -53,10 +55,24 @@ namespace Mana {
 		m_PhysicalDevice->Init(m_SwapChain->GetSurface());
 		m_Device->Init(m_PhysicalDevice, m_SwapChain->GetSurface());
 		m_SwapChain->Init(m_Device);
+
+		m_RenderPipeline->Init(m_SwapChain);
+		m_FrameBuffer->Init(m_SwapChain, m_RenderPipeline);
+
+		CreateSyncObjects();
 	}
 
 	void VulkanRenderAPI::Shutdown()
 	{
+		vkDeviceWaitIdle(m_Device->GetDevice());
+
+		vkDestroySemaphore(m_Device->GetDevice(), m_ImageAvailableSemaphore, nullptr);
+		vkDestroySemaphore(m_Device->GetDevice(), m_RenderFinishedSemaphore, nullptr);
+		vkDestroyFence(m_Device->GetDevice(), m_InFlightFence, nullptr);
+
+		m_FrameBuffer->Clean();
+		m_RenderPipeline->Clean();
+
 		m_SwapChain->Clean();
 		if (enableValidationLayers) {
 			auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(s_Instance, "vkDestroyDebugUtilsMessengerEXT");
@@ -152,6 +168,22 @@ namespace Mana {
 		MANA_CORE_ASSERT(result == VK_SUCCESS, "Failed to set up debug messanger");
 	}
 
+	void VulkanRenderAPI::CreateSyncObjects()
+	{
+		VkSemaphoreCreateInfo semaphoreInfo{};
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		VkFenceCreateInfo fenceInfo{};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+		if (vkCreateSemaphore(m_Device->GetDevice(), &semaphoreInfo, nullptr, &m_ImageAvailableSemaphore) != VK_SUCCESS ||
+			vkCreateSemaphore(m_Device->GetDevice(), &semaphoreInfo, nullptr, &m_RenderFinishedSemaphore) != VK_SUCCESS ||
+			vkCreateFence(m_Device->GetDevice(), &fenceInfo, nullptr, &m_InFlightFence) != VK_SUCCESS) {
+			MANA_CORE_ASSERT(false, "failed to create semaphores!");
+		}
+	}
+
 	std::vector<const char*> VulkanRenderAPI::GetRequiredExtensions() {
 		uint32_t glfwExtensionCount = 0;
 		const char** glfwExtensions;
@@ -180,6 +212,50 @@ namespace Mana {
 
 	void VulkanRenderAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
 	{
+		vkWaitForFences(m_Device->GetDevice(), 1, &m_InFlightFence, VK_TRUE, UINT64_MAX);
+		vkResetFences(m_Device->GetDevice(), 1, &m_InFlightFence);
+
+		uint32_t imageIndex;
+		vkAcquireNextImageKHR(m_Device->GetDevice(), m_SwapChain->GetSwapchain(), UINT64_MAX, m_ImageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+		vkResetCommandBuffer(m_RenderPipeline->GetCommandBuffer(), 0);
+		m_RenderPipeline->RecordCommandBuffer(imageIndex, m_FrameBuffer);
+
+
+		VkSemaphore waitSemaphores[] = { m_ImageAvailableSemaphore };
+		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+		auto commandBuffer = m_RenderPipeline->GetCommandBuffer();
+
+		VkSubmitInfo submitInfo{};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = waitSemaphores;
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+
+		VkSemaphore signalSemaphores[] = { m_RenderFinishedSemaphore };
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores = signalSemaphores;
+
+		if (vkQueueSubmit(m_Device->GetGraphicsQueue(), 1, &submitInfo, m_InFlightFence) != VK_SUCCESS) {
+			MANA_CORE_ASSERT(false, "failed to submit draw command buffer!");
+		}
+
+		VkPresentInfoKHR presentInfo{};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = signalSemaphores;
+
+		VkSwapchainKHR swapChains[] = { m_SwapChain->GetSwapchain() };
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = swapChains;
+		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.pResults = nullptr;
+
+		vkQueuePresentKHR(m_Device->GetPresentQueue(), &presentInfo); // Finally 2.0!!!
 	}
 
 	void VulkanRenderAPI::SetViewport(uint32_t originX, uint32_t originY, uint32_t width, uint32_t height)
