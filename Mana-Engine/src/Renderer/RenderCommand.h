@@ -9,30 +9,28 @@ namespace Mana {
 	class RenderCommand {
 	public:
 		inline static void Init(void* nativeWindow) {
-			s_RenderAPI = RenderAPI::Create();
-			s_RenderAPI->Init(nativeWindow);
+			RenderAPI::Create();
+			RenderAPI::s_RenderAPI->Init(nativeWindow);
 		}
 
 		inline static void Shutdown() {
-			s_RenderAPI->Shutdown();
+			RenderAPI::s_RenderAPI->Shutdown();
 		}
 
 		inline static void SetClearColor(vec4 color) {
-			s_RenderAPI->SetClearColor(color);
+			RenderAPI::s_RenderAPI->SetClearColor(color);
 		}
 
 		inline static void Clear() {
-			s_RenderAPI->Clear();
+			RenderAPI::s_RenderAPI->Clear();
 		}
 
 		inline static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count = 0) {
-			s_RenderAPI->DrawIndexed(vertexArray, count);
+			RenderAPI::s_RenderAPI->DrawIndexed(vertexArray, count);
 		}
 
 		inline static void SetViewport(uint32_t originX, uint32_t originY, uint32_t width, uint32_t height) {
-			s_RenderAPI->SetViewport(originX, originY, width, height);
+			RenderAPI::s_RenderAPI->SetViewport(originX, originY, width, height);
 		}
-	private:
-		static Scope<RenderAPI> s_RenderAPI;
 	};
 }

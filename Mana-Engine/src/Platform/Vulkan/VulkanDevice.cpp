@@ -62,6 +62,7 @@ namespace Mana {
 		MANA_CORE_ASSERT(m_PhysicalDevice != VK_NULL_HANDLE, "No suitable GPU found!");
 	}
 
+	// TODO: Very simple for now, we should look for the most optimal device in the future to always select the best card by default
 	bool VulkanPhysicalDevice::IsSuitableDevice(VkPhysicalDevice  device, VkSurfaceKHR surface)
 	{
 		// Get device info

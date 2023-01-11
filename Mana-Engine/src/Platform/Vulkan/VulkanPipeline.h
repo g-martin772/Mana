@@ -2,7 +2,8 @@
 
 #include "Core/Core.h"
 #include "VulkanSwapChain.h"
-#include "VulkanFrameBuffer.h"
+
+#include "VulkanShader.h"
 
 #include <glm/glm.hpp>
 #include <vulkan/vulkan.h>
@@ -14,21 +15,16 @@ namespace Mana {
 		void Init(const Ref<VulkanSwapChain>& swapchain);
 		void Clean();
 
-		void RecordCommandBuffer(uint32_t imageIndex, const Ref<VulkanFrameBuffer>& framebuffer);
-
-		VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }
-		VkRenderPass GetRenderPass() const { return m_RenderPass; }
-		VkCommandPool GetCommandPool() const { return m_CommandPool; }
-		VkCommandBuffer GetCommandBuffer() const { return m_CommandBuffer; }
+		inline VkPipeline GetPipeline() const { return m_GraphicsPipeline; }
+		inline VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }
+		inline VkRenderPass GetRenderPass() const { return m_RenderPass; }
 	private:
 		VkPipelineLayout m_PipelineLayout;
 		VkPipeline m_GraphicsPipeline;
 
 		VkRenderPass m_RenderPass;
 
-		VkCommandPool m_CommandPool;
-		VkCommandBuffer m_CommandBuffer;
-
 		Ref<VulkanSwapChain> m_Swapchain;
+		Ref<VulkanShader> m_Shader;
 	};
 }

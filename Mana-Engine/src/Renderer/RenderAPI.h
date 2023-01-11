@@ -5,6 +5,8 @@
 #include "Buffer.h"
 
 namespace Mana {
+	class RenderCommand;
+
 	class MANA_API RenderAPI {
 	public:
 		enum class API {
@@ -21,9 +23,13 @@ namespace Mana {
 		virtual void SetViewport(uint32_t originX, uint32_t originY, uint32_t width, uint32_t height) = 0;
 
 		inline static API GetAPI() { return s_API; }
-		static Scope<RenderAPI> Create();
+		inline static RenderAPI* GetRenderAPI() { return s_RenderAPI.get(); }
+		static void Create();
 	private:
-		// To be defined by client in the future, also support for switching at runtime if even possible
+		// To be defined by client in the future
 		static API s_API;
+		static Scope<RenderAPI> s_RenderAPI;
+
+		friend class RenderCommand;
 	};
 }

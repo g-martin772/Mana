@@ -2,8 +2,10 @@
 
 class AppLayer : public Mana::Layer {
 	void OnAttach() override {
-		/*m_Scene = std::make_shared<Mana::Scene>();
+		
 
+		/*m_Scene = std::make_shared<Mana::Scene>();
+		
 		Mana::Entity e = m_Scene->CreateEntity();
 		e.AddComponent<Mana::SpriteRendererComponent>(Mana::vec4{ 1.0f, 1.0f, 0.0f, 1.0f });
 		auto& tc = e.GetComponent<Mana::TransformComponent>();

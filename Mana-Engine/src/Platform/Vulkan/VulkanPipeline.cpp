@@ -1,21 +1,15 @@
 #include "manapch.h"
 #include "VulkanPipeline.h"
 
-#include "VulkanShader.h"
-
 namespace Mana {
 	void VulkanPipeline::Init(const Ref<VulkanSwapChain>& swapchain)
 	{
 		m_Swapchain = swapchain;
 		 
-		VulkanShader vert("assets/shaders/test.vert", "assets/shaders/vert.spv");
-		VulkanShader frag("assets/shaders/test.frag", "assets/shaders/frag.spv");
+		m_Shader = std::make_shared<VulkanShader>("assets/shaders/simple.glsl");
 
-		vert.Compile(swapchain->GetDevice(), true);
-		VkShaderModule vertShaderModule = vert.GetShader();
-
-		frag.Compile(swapchain->GetDevice(), false);
-		VkShaderModule fragShaderModule = frag.GetShader();
+		VkShaderModule vertShaderModule = m_Shader->GetShader(VK_SHADER_STAGE_VERTEX_BIT);
+		VkShaderModule fragShaderModule = m_Shader->GetShader(VK_SHADER_STAGE_FRAGMENT_BIT);
 
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -202,88 +196,14 @@ namespace Mana {
 			MANA_CORE_ASSERT(false, "Failed to create graphics pipeline!");
 		}
 
-
-
-
-
-		QueueFamilys queueFamilyIndices = swapchain->GetDevice()->GetPhysicalDevice()->GetQueueFamilys();
-
-		VkCommandPoolCreateInfo poolInfo{};
-		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		poolInfo.queueFamilyIndex = queueFamilyIndices.GraphicsFamily.value();
-
-		if (vkCreateCommandPool(swapchain->GetDevice()->GetDevice(), &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS) {
-			MANA_CORE_ASSERT(false, "Failed to create command pool!");
-		}
-
-
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = m_CommandPool;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = 1;
-
-		if (vkAllocateCommandBuffers(m_Swapchain->GetDevice()->GetDevice(), &allocInfo, &m_CommandBuffer) != VK_SUCCESS) {
-			MANA_CORE_ASSERT(false, "Failed to allocate command buffers!");
-		}
-
-		//vkDestroyShaderModule(m_Swapchain->GetDevice()->GetDevice(), fragShaderModule, nullptr);
-		//vkDestroyShaderModule(m_Swapchain->GetDevice()->GetDevice(), vertShaderModule, nullptr);
+		vkDestroyShaderModule(m_Swapchain->GetDevice()->GetDevice(), fragShaderModule, nullptr);
+		vkDestroyShaderModule(m_Swapchain->GetDevice()->GetDevice(), vertShaderModule, nullptr);
 	}
 
 	void VulkanPipeline::Clean()
 	{
 		vkDestroyPipeline(m_Swapchain->GetDevice()->GetDevice(), m_GraphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(m_Swapchain->GetDevice()->GetDevice(), m_PipelineLayout, nullptr);
-		vkDestroyCommandPool(m_Swapchain->GetDevice()->GetDevice(), m_CommandPool, nullptr);
 		vkDestroyRenderPass(m_Swapchain->GetDevice()->GetDevice(), m_RenderPass, nullptr);
-	}
-
-	void VulkanPipeline::RecordCommandBuffer(uint32_t imageIndex, const Ref<VulkanFrameBuffer>& framebuffer) {
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = 0;
-		beginInfo.pInheritanceInfo = nullptr;
-
-		if (vkBeginCommandBuffer(m_CommandBuffer, &beginInfo) != VK_SUCCESS) {
-			MANA_CORE_ASSERT(false, "Failed to begin recording command buffer!");
-		}
-
-		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_RenderPass;
-		renderPassInfo.framebuffer = framebuffer->GetBuffers()[imageIndex];
-		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_Swapchain->GetSwapchainextent();
-		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
-		renderPassInfo.clearValueCount = 1;
-		renderPassInfo.pClearValues = &clearColor;
-
-		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-		vkCmdBindPipeline(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
-
-		VkViewport viewport{};
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
-		viewport.width  = static_cast<float>(m_Swapchain->GetSwapchainextent().width);
-		viewport.height = static_cast<float>(m_Swapchain->GetSwapchainextent().height);
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(m_CommandBuffer, 0, 1, &viewport);
-
-		VkRect2D scissor{};
-		scissor.offset = { 0, 0 };
-		scissor.extent = m_Swapchain->GetSwapchainextent();
-		vkCmdSetScissor(m_CommandBuffer, 0, 1, &scissor);
-
-		vkCmdDraw(m_CommandBuffer, 3, 1, 0, 0); // Finally!!!!!!!
-
-		vkCmdEndRenderPass(m_CommandBuffer);
-
-		if (vkEndCommandBuffer(m_CommandBuffer) != VK_SUCCESS) {
-			MANA_CORE_ASSERT(false, "Failed to record command buffer!");
-		}
 	}
 }
