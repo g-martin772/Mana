@@ -42,8 +42,10 @@ namespace Mana {
 
 	// Physical Device
 
-	void VulkanPhysicalDevice::Init(VkSurfaceKHR surface)
+	void VulkanPhysicalDevice::Init()
 	{
+		auto surface = VulkanRenderAPI::GetCurrentSwapchain()->GetSurface();
+
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(VulkanRenderAPI::GetInstance(), &deviceCount, nullptr);
 
@@ -100,9 +102,10 @@ namespace Mana {
 
 	// Logical Device
 
-	void VulkanLogicalDevice::Init(Ref<VulkanPhysicalDevice> physicalDevice, VkSurfaceKHR surface)
+	void VulkanLogicalDevice::Init()
 	{
-		m_PhysicalDevice = physicalDevice;
+		auto surface = VulkanRenderAPI::GetCurrentSwapchain()->GetSurface();
+		m_PhysicalDevice = VulkanRenderAPI::GetPhysicalDevice();
 
 		QueueFamilys indices = FindQueueFamilies(surface, m_PhysicalDevice->GetDevice());
 

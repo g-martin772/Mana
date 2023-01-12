@@ -8,11 +8,9 @@
 #include <GLFW/glfw3.h>
 
 namespace Mana {
-	class MANA_API VulkanPipeline;
-
 	class MANA_API VulkanFrameBuffer {
 	public:
-		void Init(const Ref<VulkanSwapChain>& swapchain, const Ref<VulkanPipeline>& renderPipeline);
+		void Init();
 		void Clean();
 
 		void RecordCommandBuffer(uint32_t imageIndex, uint32_t frame, const Ref<VulkanPipeline>& pipeline);
@@ -35,7 +33,5 @@ namespace Mana {
 
 		VkCommandPool m_CommandPool;
 		std::vector<VkCommandBuffer> m_CommandBuffers;
-
-		Ref<VulkanSwapChain> m_Swapchain;
 	};
 }

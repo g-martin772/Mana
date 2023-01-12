@@ -12,7 +12,7 @@
 namespace Mana {
 	class MANA_API VulkanPipeline {
 	public:
-		void Init(const Ref<VulkanSwapChain>& swapchain);
+		void Init();
 		void Clean();
 
 		inline VkPipeline GetPipeline() const { return m_GraphicsPipeline; }
@@ -24,7 +24,6 @@ namespace Mana {
 
 		VkRenderPass m_RenderPass;
 
-		Ref<VulkanSwapChain> m_Swapchain;
 		Ref<VulkanShader> m_Shader;
 	};
 }

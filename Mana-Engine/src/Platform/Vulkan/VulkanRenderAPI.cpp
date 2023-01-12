@@ -54,12 +54,12 @@ namespace Mana {
 		CreateInstance();
 		InitDebugMessanger();
 		m_SwapChain->InitSurface((GLFWwindow*)nativeWindow);
-		m_PhysicalDevice->Init(m_SwapChain->GetSurface());
-		m_Device->Init(m_PhysicalDevice, m_SwapChain->GetSurface());
-		m_SwapChain->Init(m_Device);
+		m_PhysicalDevice->Init();
+		m_Device->Init();
+		m_SwapChain->Init();
 
-		m_RenderPipeline->Init(m_SwapChain);
-		m_FrameBuffer->Init(m_SwapChain, m_RenderPipeline);
+		m_RenderPipeline->Init();
+		m_FrameBuffer->Init();
 	}
 
 	void VulkanRenderAPI::Shutdown()

@@ -1,10 +1,14 @@
 #include "manapch.h"
 #include "VulkanPipeline.h"
 
+#include "VulkanRenderAPI.h"
+#include "VulkanDevice.h"
+
 namespace Mana {
-	void VulkanPipeline::Init(const Ref<VulkanSwapChain>& swapchain)
+	void VulkanPipeline::Init()
 	{
-		m_Swapchain = swapchain;
+		auto swapchain = VulkanRenderAPI::GetCurrentSwapchain();
+		auto device = VulkanRenderAPI::GetDevice();
 		 
 		m_Shader = std::make_shared<VulkanShader>("assets/shaders/simple.glsl");
 
@@ -66,7 +70,7 @@ namespace Mana {
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		if (vkCreateRenderPass(swapchain->GetDevice()->GetDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
+		if (vkCreateRenderPass(device->GetDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "failed to create render pass!");
 		}
 
@@ -170,7 +174,7 @@ namespace Mana {
 		pipelineLayoutInfo.pushConstantRangeCount = 0;
 		pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-		if (vkCreatePipelineLayout(swapchain->GetDevice()->GetDevice(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
+		if (vkCreatePipelineLayout(device->GetDevice(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to create pipeline layout!");
 		}
 
@@ -192,18 +196,20 @@ namespace Mana {
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.basePipelineIndex = -1;
 
-		if (vkCreateGraphicsPipelines(swapchain->GetDevice()->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS) {
+		if (vkCreateGraphicsPipelines(device->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to create graphics pipeline!");
 		}
 
-		vkDestroyShaderModule(m_Swapchain->GetDevice()->GetDevice(), fragShaderModule, nullptr);
-		vkDestroyShaderModule(m_Swapchain->GetDevice()->GetDevice(), vertShaderModule, nullptr);
+		vkDestroyShaderModule(device->GetDevice(), fragShaderModule, nullptr);
+		vkDestroyShaderModule(device->GetDevice(), vertShaderModule, nullptr);
 	}
 
 	void VulkanPipeline::Clean()
 	{
-		vkDestroyPipeline(m_Swapchain->GetDevice()->GetDevice(), m_GraphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(m_Swapchain->GetDevice()->GetDevice(), m_PipelineLayout, nullptr);
-		vkDestroyRenderPass(m_Swapchain->GetDevice()->GetDevice(), m_RenderPass, nullptr);
+		auto device = VulkanRenderAPI::GetDevice();
+
+		vkDestroyPipeline(device->GetDevice(), m_GraphicsPipeline, nullptr);
+		vkDestroyPipelineLayout(device->GetDevice(), m_PipelineLayout, nullptr);
+		vkDestroyRenderPass(device->GetDevice(), m_RenderPass, nullptr);
 	}
 }

@@ -21,14 +21,11 @@ namespace Mana {
 		}
 	};
 
-	class MANA_API VulkanSwapChain;
-	struct MANA_API SwapChainSupportDetails;
-
 	// Physical
 
 	class MANA_API VulkanPhysicalDevice {
 	public:
-		void Init(VkSurfaceKHR surface);
+		void Init();
 
 		VkPhysicalDevice GetDevice() const { return m_PhysicalDevice; }
 		const QueueFamilys& GetQueueFamilys() const { return m_QueueFamilys; }
@@ -46,7 +43,7 @@ namespace Mana {
 
 	class MANA_API VulkanLogicalDevice {
 	public:
-		void Init(Ref<VulkanPhysicalDevice> physicalDevice, VkSurfaceKHR surface);
+		void Init();
 		void Clean();
 
 		VkDevice GetDevice() const { return m_Device; }
@@ -61,5 +58,3 @@ namespace Mana {
 		VkQueue m_PresentQueue;
 	};
 }
-
-#include "Platform/Vulkan/VulkanSwapChain.h"

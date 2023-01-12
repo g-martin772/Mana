@@ -84,11 +84,10 @@ namespace Mana {
 		auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
 		m_Name = path.substr(lastSlash, count);
 
-		std::filesystem::path cPath = m_Path;
 		std::filesystem::path cacheDir = GetCacheDirectory();
-		auto binVerPath = cacheDir / (cPath.filename().string() + VkShaderStageCachedFileExtension(VK_SHADER_STAGE_VERTEX_BIT));
-		auto binFragPath = cacheDir / (cPath.filename().string() + VkShaderStageCachedFileExtension(VK_SHADER_STAGE_FRAGMENT_BIT));
-		std::ifstream inVert(binVerPath, std::ios::in | std::ios::binary);
+		auto binVertPath = cacheDir / (m_Name + VkShaderStageCachedFileExtension(VK_SHADER_STAGE_VERTEX_BIT));
+		auto binFragPath = cacheDir / (m_Name + VkShaderStageCachedFileExtension(VK_SHADER_STAGE_FRAGMENT_BIT));
+		std::ifstream inVert(binVertPath, std::ios::in | std::ios::binary);
 		std::ifstream inFrag(binFragPath, std::ios::in | std::ios::binary);
 
 		if (!inVert.is_open() || !inFrag.is_open()) 
@@ -209,6 +208,19 @@ namespace Mana {
 
 		m_VulkanSPIRV[VK_SHADER_STAGE_VERTEX_BIT] = vertSpirv;
 		m_VulkanSPIRV[VK_SHADER_STAGE_FRAGMENT_BIT] = fragSpirv;
+
+#if 0
+		std::filesystem::path cPath = m_Path;
+		std::filesystem::path cacheDir = GetCacheDirectory();
+		auto binVertPath = cacheDir / (m_Name + VkShaderStageCachedFileExtension(VK_SHADER_STAGE_VERTEX_BIT));
+		auto binFragPath = cacheDir / (m_Name + VkShaderStageCachedFileExtension(VK_SHADER_STAGE_FRAGMENT_BIT));
+
+		std::ofstream outVert(binVertPath, std::ios::out | std::ofstream::binary);
+		std::copy(vertSpirv.begin(), vertSpirv.end(), std::ostreambuf_iterator<char>(outVert));
+
+		std::ofstream outFrag(binFragPath, std::ios::out | std::ofstream::binary);
+		std::copy(fragSpirv.begin(), fragSpirv.end(), std::ostreambuf_iterator<char>(outFrag));
+#endif
 	}
 	
 	void VulkanShader::CreateShaderModules()

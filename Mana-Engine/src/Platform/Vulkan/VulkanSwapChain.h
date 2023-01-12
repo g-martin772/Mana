@@ -17,7 +17,7 @@ namespace Mana {
 
 	class MANA_API VulkanSwapChain {
 	public:
-		void Init(Ref<VulkanLogicalDevice> device);
+		void Init();
 		void InitSurface(GLFWwindow* window);
 		void Clean();
 
@@ -28,7 +28,6 @@ namespace Mana {
 		inline const VkExtent2D& GetSwapchainextent() const { return m_SwapChainExtent; }
 		inline const VkFormat& GetSwapchainFormat() const { return m_SwapChainImageFormat; }
 		inline const std::vector<VkImageView>& GetImageViews() const { return m_SwapChainImageViews; }
-		inline const Ref<VulkanLogicalDevice>& GetDevice() const { return m_Device; }
 	private:
 		void CreateSwapChain();
 		void CreateImageViews();
@@ -39,8 +38,6 @@ namespace Mana {
 	private:
 		VkSurfaceKHR m_Surface;
 		GLFWwindow* m_Window;
-
-		Ref<VulkanLogicalDevice> m_Device;
 
 		VkSwapchainKHR m_SwapChain;
 		std::vector<VkImage> m_SwapChainImages;

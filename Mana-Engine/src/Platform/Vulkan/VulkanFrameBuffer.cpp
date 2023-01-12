@@ -2,11 +2,14 @@
 #include "VulkanFrameBuffer.h"
 #include "VulkanPipeline.h"
 
-namespace Mana {
-	void VulkanFrameBuffer::Init(const Ref<VulkanSwapChain>& swapchain, const Ref<VulkanPipeline>& renderPipeline)
-	{
-		m_Swapchain = swapchain;
+#include "VulkanRenderAPI.h"
 
+namespace Mana {
+	void VulkanFrameBuffer::Init()
+	{
+		auto swapchain = VulkanRenderAPI::GetCurrentSwapchain();
+		auto renderPipeline = VulkanRenderAPI::GetCurrentPipeline();
+		auto device = VulkanRenderAPI::GetDevice();
 		// Create Framebuffers
 
 		m_Framebuffers.resize(swapchain->GetImageViews().size());
@@ -25,21 +28,21 @@ namespace Mana {
 			framebufferInfo.height = swapchain->GetSwapchainextent().height;
 			framebufferInfo.layers = 1;
 
-			if (vkCreateFramebuffer(swapchain->GetDevice()->GetDevice(), &framebufferInfo, nullptr, &m_Framebuffers[i]) != VK_SUCCESS) {
+			if (vkCreateFramebuffer(device->GetDevice(), &framebufferInfo, nullptr, &m_Framebuffers[i]) != VK_SUCCESS) {
 				MANA_CORE_ASSERT(false, "Failed to create framebuffer!");
 			}
 		}
 
 		// Create Command Buffers
 
-		QueueFamilys queueFamilyIndices = swapchain->GetDevice()->GetPhysicalDevice()->GetQueueFamilys();
+		QueueFamilys queueFamilyIndices = device->GetPhysicalDevice()->GetQueueFamilys();
 
 		VkCommandPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		poolInfo.queueFamilyIndex = queueFamilyIndices.GraphicsFamily.value();
 
-		if (vkCreateCommandPool(swapchain->GetDevice()->GetDevice(), &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS) {
+		if (vkCreateCommandPool(device->GetDevice(), &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to create command pool!");
 		}
 
@@ -52,7 +55,7 @@ namespace Mana {
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandBufferCount = (uint32_t)m_CommandBuffers.size();
 
-		if (vkAllocateCommandBuffers(m_Swapchain->GetDevice()->GetDevice(), &allocInfo, m_CommandBuffers.data()) != VK_SUCCESS) {
+		if (vkAllocateCommandBuffers(device->GetDevice(), &allocInfo, m_CommandBuffers.data()) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to allocate command buffers!");
 		}
 
@@ -61,20 +64,24 @@ namespace Mana {
 	
 	void VulkanFrameBuffer::Clean()
 	{
-		vkDestroyCommandPool(m_Swapchain->GetDevice()->GetDevice(), m_CommandPool, nullptr);
+		auto device = VulkanRenderAPI::GetDevice();
+
+		vkDestroyCommandPool(device->GetDevice(), m_CommandPool, nullptr);
 		for (uint32_t i = 0; i < GetFramesOnFlight(); i++) {
-			vkDestroySemaphore(m_Swapchain->GetDevice()->GetDevice(), m_ImageAvailableSemaphores[i], nullptr);
-			vkDestroySemaphore(m_Swapchain->GetDevice()->GetDevice(), m_RenderFinishedSemaphores[i], nullptr);
-			vkDestroyFence(m_Swapchain->GetDevice()->GetDevice(), m_InFlightFences[i], nullptr);
+			vkDestroySemaphore(device->GetDevice(), m_ImageAvailableSemaphores[i], nullptr);
+			vkDestroySemaphore(device->GetDevice(), m_RenderFinishedSemaphores[i], nullptr);
+			vkDestroyFence(device->GetDevice(), m_InFlightFences[i], nullptr);
 		}
 
 		for (auto framebuffer : m_Framebuffers) {
-			vkDestroyFramebuffer(m_Swapchain->GetDevice()->GetDevice(), framebuffer, nullptr);
+			vkDestroyFramebuffer(device->GetDevice(), framebuffer, nullptr);
 		}
 	}
 
 	void VulkanFrameBuffer::CreateSyncObjects()
 	{
+		auto device = VulkanRenderAPI::GetDevice();
+
 		m_ImageAvailableSemaphores.resize(GetFramesOnFlight());
 		m_RenderFinishedSemaphores.resize(GetFramesOnFlight());
 		m_InFlightFences.resize(GetFramesOnFlight());
@@ -87,15 +94,17 @@ namespace Mana {
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
 		for (uint32_t i = 0; i < GetFramesOnFlight(); i++) {
-			if (vkCreateSemaphore(m_Swapchain->GetDevice()->GetDevice(), &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]) != VK_SUCCESS ||
-				vkCreateSemaphore(m_Swapchain->GetDevice()->GetDevice(), &semaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]) != VK_SUCCESS ||
-				vkCreateFence(m_Swapchain->GetDevice()->GetDevice(), &fenceInfo, nullptr, &m_InFlightFences[i]) != VK_SUCCESS) {
+			if (vkCreateSemaphore(device->GetDevice(), &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]) != VK_SUCCESS ||
+				vkCreateSemaphore(device->GetDevice(), &semaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]) != VK_SUCCESS ||
+				vkCreateFence(device->GetDevice(), &fenceInfo, nullptr, &m_InFlightFences[i]) != VK_SUCCESS) {
 				MANA_CORE_ASSERT(false, "Failed to create semaphores!");
 			}
 		}
 	}
 
 	void VulkanFrameBuffer::RecordCommandBuffer(uint32_t imageIndex, uint32_t frame, const Ref<VulkanPipeline>& pipeline) {
+		auto swapchain = VulkanRenderAPI::GetCurrentSwapchain();
+		
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags = 0;
@@ -110,7 +119,7 @@ namespace Mana {
 		renderPassInfo.renderPass = pipeline->GetRenderPass();
 		renderPassInfo.framebuffer = m_Framebuffers[imageIndex];
 		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_Swapchain->GetSwapchainextent();
+		renderPassInfo.renderArea.extent = swapchain->GetSwapchainextent();
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
 		renderPassInfo.clearValueCount = 1;
 		renderPassInfo.pClearValues = &clearColor;
@@ -122,15 +131,15 @@ namespace Mana {
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(m_Swapchain->GetSwapchainextent().width);
-		viewport.height = static_cast<float>(m_Swapchain->GetSwapchainextent().height);
+		viewport.width = static_cast<float>(swapchain->GetSwapchainextent().width);
+		viewport.height = static_cast<float>(swapchain->GetSwapchainextent().height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(m_CommandBuffers[frame], 0, 1, &viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
-		scissor.extent = m_Swapchain->GetSwapchainextent();
+		scissor.extent = swapchain->GetSwapchainextent();
 		vkCmdSetScissor(m_CommandBuffers[frame], 0, 1, &scissor);
 
 		vkCmdDraw(m_CommandBuffers[frame], 6, 1, 0, 0); // Finally!!!!!!!

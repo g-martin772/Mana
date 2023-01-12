@@ -4,9 +4,8 @@
 #include "VulkanRenderAPI.h"
 
 namespace Mana {
-	void VulkanSwapChain::Init(Ref<VulkanLogicalDevice> device)
+	void VulkanSwapChain::Init()
 	{
-		m_Device = device;
 		CreateSwapChain();
 		CreateImageViews();
 	}
@@ -21,11 +20,13 @@ namespace Mana {
 
 	void VulkanSwapChain::Clean()
 	{
+		auto device = VulkanRenderAPI::GetDevice();
+
 		for (auto imageView : m_SwapChainImageViews) {
-			vkDestroyImageView(m_Device->GetDevice(), imageView, nullptr);
+			vkDestroyImageView(device->GetDevice(), imageView, nullptr);
 		}
 
-		vkDestroySwapchainKHR(m_Device->GetDevice(), m_SwapChain, nullptr);
+		vkDestroySwapchainKHR(device->GetDevice(), m_SwapChain, nullptr);
 		vkDestroySurfaceKHR(VulkanRenderAPI::GetInstance(), m_Surface, nullptr);
 	}
 
@@ -56,7 +57,9 @@ namespace Mana {
 
 	void VulkanSwapChain::CreateSwapChain()
 	{
-		SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(m_Device->GetPhysicalDevice()->GetDevice(), m_Surface);
+		auto device = VulkanRenderAPI::GetDevice();
+
+		SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device->GetPhysicalDevice()->GetDevice(), m_Surface);
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.Formats);
 		VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapChainSupport.PresentModes);
@@ -78,7 +81,7 @@ namespace Mana {
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		QueueFamilys indices = FindQueueFamilies(m_Surface, m_Device->GetPhysicalDevice()->GetDevice());
+		QueueFamilys indices = FindQueueFamilies(m_Surface, device->GetPhysicalDevice()->GetDevice());
 		uint32_t queueFamilyIndices[] = { indices.GraphicsFamily.value(), indices.PresentFamily.value() };
 
 		if (indices.GraphicsFamily != indices.PresentFamily) {
@@ -98,13 +101,13 @@ namespace Mana {
 		createInfo.clipped = VK_TRUE;
 		createInfo.oldSwapchain = VK_NULL_HANDLE; // Required for recreating
 
-		if (vkCreateSwapchainKHR(m_Device->GetDevice(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
+		if (vkCreateSwapchainKHR(device->GetDevice(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to create swap chain!");
 		}
 
-		vkGetSwapchainImagesKHR(m_Device->GetDevice(), m_SwapChain, &imageCount, nullptr);
+		vkGetSwapchainImagesKHR(device->GetDevice(), m_SwapChain, &imageCount, nullptr);
 		m_SwapChainImages.resize(imageCount);
-		vkGetSwapchainImagesKHR(m_Device->GetDevice(), m_SwapChain, &imageCount, m_SwapChainImages.data());
+		vkGetSwapchainImagesKHR(device->GetDevice(), m_SwapChain, &imageCount, m_SwapChainImages.data());
 
 		m_SwapChainImageFormat = surfaceFormat.format;
 		m_SwapChainExtent = extent;
@@ -112,6 +115,8 @@ namespace Mana {
 
 	void VulkanSwapChain::CreateImageViews()
 	{
+		auto device = VulkanRenderAPI::GetDevice();
+
 		m_SwapChainImageViews.resize(m_SwapChainImages.size());
 
 		for (size_t i = 0; i < m_SwapChainImages.size(); i++) {
@@ -130,7 +135,7 @@ namespace Mana {
 			createInfo.subresourceRange.baseArrayLayer = 0;
 			createInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(m_Device->GetDevice(), &createInfo, nullptr, &m_SwapChainImageViews[i]) != VK_SUCCESS) {
+			if (vkCreateImageView(device->GetDevice(), &createInfo, nullptr, &m_SwapChainImageViews[i]) != VK_SUCCESS) {
 				MANA_CORE_ASSERT(false, "Failed to create image views!");
 			}
 		}
