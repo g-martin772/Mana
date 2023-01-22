@@ -194,10 +194,20 @@ namespace Mana {
 	{
 		auto m_InFlightFence = m_FrameBuffer->GetInFlightFences()[m_FrameCount];
 		vkWaitForFences(m_Device->GetDevice(), 1, &m_InFlightFence, VK_TRUE, UINT64_MAX);
-		vkResetFences(m_Device->GetDevice(), 1, &m_InFlightFence);
 
 		uint32_t imageIndex;
-		vkAcquireNextImageKHR(m_Device->GetDevice(), m_SwapChain->GetSwapchain(), UINT64_MAX, m_FrameBuffer->GetImageAvailableSemaphores()[m_FrameCount], VK_NULL_HANDLE, &imageIndex);
+		VkResult result = vkAcquireNextImageKHR(m_Device->GetDevice(), m_SwapChain->GetSwapchain(), UINT64_MAX, m_FrameBuffer->GetImageAvailableSemaphores()[m_FrameCount], VK_NULL_HANDLE, &imageIndex);
+
+		// Check if swapchain recreation is needed
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||  m_FrameBuffer->IsFramebufferResized()) {
+			m_SwapChain->RecreateSwapchain();
+			return;
+		}
+		else {
+			MANA_CORE_ASSERT(result == VK_SUCCESS, "Failed to aquire sc image");
+		}
+
+		vkResetFences(m_Device->GetDevice(), 1, &m_InFlightFence);
 
 		vkResetCommandBuffer(m_FrameBuffer->GetCommandBuffers()[m_FrameCount], 0);
 		m_FrameBuffer->RecordCommandBuffer(imageIndex, m_FrameCount, m_RenderPipeline);

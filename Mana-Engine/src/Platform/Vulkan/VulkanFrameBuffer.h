@@ -18,6 +18,8 @@ namespace Mana {
 		inline const uint32_t GetFramesOnFlight() { return 2; }
 
 		inline const std::vector<VkFramebuffer>& GetBuffers() const { return m_Framebuffers; }
+		inline const bool& IsFramebufferResized() const { return m_FramebufferResized; }
+		inline void SetFramebufferResized(bool is = true) { m_FramebufferResized = is; }
 		inline const std::vector<VkSemaphore>& GetImageAvailableSemaphores() const { return m_ImageAvailableSemaphores; }
 		inline const std::vector<VkSemaphore>& GetRenderFinishedSemaphores() const { return m_RenderFinishedSemaphores; }
 		inline const std::vector<VkFence>& GetInFlightFences() const { return m_InFlightFences; }
@@ -33,5 +35,7 @@ namespace Mana {
 
 		VkCommandPool m_CommandPool;
 		std::vector<VkCommandBuffer> m_CommandBuffers;
+	
+		bool m_FramebufferResized = false;
 	};
 }

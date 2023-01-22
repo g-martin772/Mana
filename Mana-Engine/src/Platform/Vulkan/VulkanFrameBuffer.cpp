@@ -12,6 +12,8 @@ namespace Mana {
 		auto device = VulkanRenderAPI::GetDevice();
 		// Create Framebuffers
 
+		m_FramebufferResized = false;
+
 		m_Framebuffers.resize(swapchain->GetImageViews().size());
 
 		for (size_t i = 0; i < swapchain->GetImageViews().size(); i++) {

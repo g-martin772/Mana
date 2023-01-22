@@ -9,6 +9,7 @@
 #include "Renderer/RenderAPI.h"
 
 #include "vulkan/vulkan.h"
+#include <Platform/Vulkan/VulkanRenderAPI.h>
 
 namespace Mana {
 
@@ -81,6 +82,9 @@ namespace Mana {
 
 	void window_size_callback(GLFWwindow* window, int width, int height)
 	{
+		if (RenderAPI::GetAPI() == RenderAPI::API::Vulkan)
+			VulkanRenderAPI::GetCurrentFrameBuffer()->SetFramebufferResized();
+
 		WindowResizeEvent e(width, height);
 		ManaApplication::Get()->OnEvent(e);
 	}
@@ -179,6 +183,9 @@ namespace Mana {
 			MANA_CORE_ASSERT(false, "Selected RenderAPI not supported for Windows");
 
 		SetCalbacks();
+
+		glfwSetWindowUserPointer(m_Window, this);
+
 		RenderCommand::Init((void*)m_Window);
 		RenderCommand::SetViewport(0, 0, m_Width, m_Height);
 	}
@@ -192,7 +199,7 @@ namespace Mana {
 			MANA_CORE_ASSERT(false, "Vulkan not supported for this device");
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		//glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 		m_Window = glfwCreateWindow(m_Width, m_Height, m_Name, NULL, NULL);
 
 		if (!m_Window) {

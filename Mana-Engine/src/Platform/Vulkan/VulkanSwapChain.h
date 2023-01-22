@@ -21,6 +21,8 @@ namespace Mana {
 		void InitSurface(GLFWwindow* window);
 		void Clean();
 
+		void RecreateSwapchain();
+
 		static SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
 
 		inline const VkSurfaceKHR& GetSurface() const { return m_Surface; }
@@ -31,6 +33,10 @@ namespace Mana {
 	private:
 		void CreateSwapChain();
 		void CreateImageViews();
+
+		void CleanSwapchain();
+		void CleanSurface();
+		void CleanImages();
 
 		VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);

@@ -10,6 +10,8 @@ namespace Mana {
 		CreateImageViews();
 	}
 
+
+
 	void VulkanSwapChain::InitSurface(GLFWwindow* window)
 	{
 		m_Window = window;
@@ -18,17 +20,47 @@ namespace Mana {
 		}
 	}
 
+	void VulkanSwapChain::CleanSurface() {
+		vkDestroySurfaceKHR(VulkanRenderAPI::GetInstance(), m_Surface, nullptr);
+	}
+
+	
+
+
+
+
+	
+
+	
+
 	void VulkanSwapChain::Clean()
+	{
+		CleanImages();
+		CleanSwapchain();
+		CleanSurface();
+	}
+
+
+
+
+	void VulkanSwapChain::RecreateSwapchain()
 	{
 		auto device = VulkanRenderAPI::GetDevice();
 
-		for (auto imageView : m_SwapChainImageViews) {
-			vkDestroyImageView(device->GetDevice(), imageView, nullptr);
-		}
+		vkDeviceWaitIdle(device->GetDevice());
 
-		vkDestroySwapchainKHR(device->GetDevice(), m_SwapChain, nullptr);
-		vkDestroySurfaceKHR(VulkanRenderAPI::GetInstance(), m_Surface, nullptr);
+		VulkanRenderAPI::GetCurrentFrameBuffer()->Clean();
+		CleanImages();
+		CleanSwapchain();
+
+		CreateSwapChain();
+		CreateImageViews();
+		VulkanRenderAPI::GetCurrentFrameBuffer()->Init();
 	}
+
+
+
+
 
 	SwapChainSupportDetails VulkanSwapChain::QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
 	{
@@ -54,6 +86,10 @@ namespace Mana {
 	}
 
 	QueueFamilys FindQueueFamilies(VkSurfaceKHR surface, VkPhysicalDevice device);
+
+
+
+
 
 	void VulkanSwapChain::CreateSwapChain()
 	{
@@ -113,6 +149,17 @@ namespace Mana {
 		m_SwapChainExtent = extent;
 	}
 
+	void VulkanSwapChain::CleanSwapchain() {
+		auto device = VulkanRenderAPI::GetDevice();
+
+		vkDestroySwapchainKHR(device->GetDevice(), m_SwapChain, nullptr);
+	}
+
+
+
+
+
+
 	void VulkanSwapChain::CreateImageViews()
 	{
 		auto device = VulkanRenderAPI::GetDevice();
@@ -140,6 +187,20 @@ namespace Mana {
 			}
 		}
 	}
+
+	void VulkanSwapChain::CleanImages()
+	{
+		auto device = VulkanRenderAPI::GetDevice();
+
+		for (auto imageView : m_SwapChainImageViews) {
+			vkDestroyImageView(device->GetDevice(), imageView, nullptr);
+		}
+	}
+
+
+
+
+
 
 	VkSurfaceFormatKHR VulkanSwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{
