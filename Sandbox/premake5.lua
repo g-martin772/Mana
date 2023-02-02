@@ -35,12 +35,8 @@ project "Sandbox"
         }
     
         filter "system:windows"
-            cppdialect "C++17"
             systemversion "latest"
-    
-            defines {
-                "MANA_PLATFORM_WINDOWS"
-            }
+            defines "MANA_PLATFORM_WINDOWS"
     
         filter "configurations:Debug"
             defines "MANA_DEBUG"

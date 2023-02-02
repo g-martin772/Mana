@@ -27,7 +27,7 @@ namespace Mana {
 	public:
 		void Init();
 
-		VkPhysicalDevice GetDevice() const { return m_PhysicalDevice; }
+		VkPhysicalDevice GetVulkanDevice() const { return m_PhysicalDevice; }
 		const QueueFamilys& GetQueueFamilys() const { return m_QueueFamilys; }
 		const VkPhysicalDeviceProperties& GetProperties() const { return m_Properties; }
 	private:
@@ -46,7 +46,7 @@ namespace Mana {
 		void Init();
 		void Clean();
 
-		VkDevice GetDevice() const { return m_Device; }
+		VkDevice GetVulkanDevice() const { return m_Device; }
 		const Ref<VulkanPhysicalDevice>& GetPhysicalDevice() const { return m_PhysicalDevice; }
 		VkQueue GetGraphicsQueue() const { return m_GraphicsQueue; }
 		VkQueue GetPresentQueue() const { return m_PresentQueue; }

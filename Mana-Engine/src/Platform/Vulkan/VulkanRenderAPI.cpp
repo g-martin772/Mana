@@ -64,7 +64,7 @@ namespace Mana {
 
 	void VulkanRenderAPI::Shutdown()
 	{
-		vkDeviceWaitIdle(m_Device->GetDevice());
+		vkDeviceWaitIdle(m_Device->GetVulkanDevice());
 
 		m_FrameBuffer->Clean();
 		m_RenderPipeline->Clean();
@@ -193,10 +193,10 @@ namespace Mana {
 	void VulkanRenderAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
 	{
 		auto m_InFlightFence = m_FrameBuffer->GetInFlightFences()[m_FrameCount];
-		vkWaitForFences(m_Device->GetDevice(), 1, &m_InFlightFence, VK_TRUE, UINT64_MAX);
+		vkWaitForFences(m_Device->GetVulkanDevice(), 1, &m_InFlightFence, VK_TRUE, UINT64_MAX);
 
 		uint32_t imageIndex;
-		VkResult result = vkAcquireNextImageKHR(m_Device->GetDevice(), m_SwapChain->GetSwapchain(), UINT64_MAX, m_FrameBuffer->GetImageAvailableSemaphores()[m_FrameCount], VK_NULL_HANDLE, &imageIndex);
+		VkResult result = vkAcquireNextImageKHR(m_Device->GetVulkanDevice(), m_SwapChain->GetSwapchain(), UINT64_MAX, m_FrameBuffer->GetImageAvailableSemaphores()[m_FrameCount], VK_NULL_HANDLE, &imageIndex);
 
 		// Check if swapchain recreation is needed
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||  m_FrameBuffer->IsFramebufferResized()) {
@@ -207,7 +207,7 @@ namespace Mana {
 			MANA_CORE_ASSERT(result == VK_SUCCESS, "Failed to aquire sc image");
 		}
 
-		vkResetFences(m_Device->GetDevice(), 1, &m_InFlightFence);
+		vkResetFences(m_Device->GetVulkanDevice(), 1, &m_InFlightFence);
 
 		vkResetCommandBuffer(m_FrameBuffer->GetCommandBuffers()[m_FrameCount], 0);
 		m_FrameBuffer->RecordCommandBuffer(imageIndex, m_FrameCount, m_RenderPipeline);

@@ -30,8 +30,7 @@ namespace Mana {
 		case ShaderDataType::Bool:     return 1;
 		}
 
-		MANA_CORE_ERROR("Unknown ShaderDataType!");
-		__debugbreak();
+		MANA_CORE_ASSERT(false, "Unknown ShaderDataType!");
 		return 0;
 	}
 

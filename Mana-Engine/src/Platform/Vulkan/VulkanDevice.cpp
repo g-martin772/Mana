@@ -107,7 +107,7 @@ namespace Mana {
 		auto surface = VulkanRenderAPI::GetCurrentSwapchain()->GetSurface();
 		m_PhysicalDevice = VulkanRenderAPI::GetPhysicalDevice();
 
-		QueueFamilys indices = FindQueueFamilies(surface, m_PhysicalDevice->GetDevice());
+		QueueFamilys indices = FindQueueFamilies(surface, m_PhysicalDevice->GetVulkanDevice());
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		std::set<uint32_t> uniqueQueueFamilies = { indices.GraphicsFamily.value(), indices.PresentFamily.value() };
@@ -140,7 +140,7 @@ namespace Mana {
 			createInfo.enabledLayerCount = 0;
 		}
 
-		VkResult result = vkCreateDevice(m_PhysicalDevice->GetDevice(), &createInfo, nullptr, &m_Device);
+		VkResult result = vkCreateDevice(m_PhysicalDevice->GetVulkanDevice(), &createInfo, nullptr, &m_Device);
 		MANA_CORE_ASSERT(result == VK_SUCCESS, "Failed to create logical Device!");
 
 		vkGetDeviceQueue(m_Device, indices.GraphicsFamily.value(), 0, &m_GraphicsQueue);

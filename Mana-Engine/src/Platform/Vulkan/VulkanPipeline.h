@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
+#include "VulkanVertexBuffer.h"
 
 namespace Mana {
 	class MANA_API VulkanPipeline {

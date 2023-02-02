@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <ostream>
+#include <iostream>
 
 #ifdef MANA_PLATFORM_WINDOWS
 	#if MANA_DLL_EXPORT

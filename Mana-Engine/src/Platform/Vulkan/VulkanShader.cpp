@@ -231,7 +231,7 @@ namespace Mana {
 		vertCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		vertCreateInfo.codeSize = m_VulkanSPIRV[VK_SHADER_STAGE_VERTEX_BIT].size() * 4;
 		vertCreateInfo.pCode = m_VulkanSPIRV[VK_SHADER_STAGE_VERTEX_BIT].data();
-		if (vkCreateShaderModule(device->GetDevice(), &vertCreateInfo, nullptr, &m_Shaders[VK_SHADER_STAGE_VERTEX_BIT]) != VK_SUCCESS) {
+		if (vkCreateShaderModule(device->GetVulkanDevice(), &vertCreateInfo, nullptr, &m_Shaders[VK_SHADER_STAGE_VERTEX_BIT]) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to create vertex shader module!");
 		}
 
@@ -239,7 +239,7 @@ namespace Mana {
 		fragCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		fragCreateInfo.codeSize = m_VulkanSPIRV[VK_SHADER_STAGE_FRAGMENT_BIT].size() * 4;
 		fragCreateInfo.pCode = m_VulkanSPIRV[VK_SHADER_STAGE_FRAGMENT_BIT].data();
-		if (vkCreateShaderModule(device->GetDevice(), &fragCreateInfo, nullptr, &m_Shaders[VK_SHADER_STAGE_FRAGMENT_BIT]) != VK_SUCCESS) {
+		if (vkCreateShaderModule(device->GetVulkanDevice(), &fragCreateInfo, nullptr, &m_Shaders[VK_SHADER_STAGE_FRAGMENT_BIT]) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to create fragment shader module!");
 		}
 	}

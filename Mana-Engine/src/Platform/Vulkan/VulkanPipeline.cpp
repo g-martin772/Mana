@@ -70,7 +70,7 @@ namespace Mana {
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		if (vkCreateRenderPass(device->GetDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
+		if (vkCreateRenderPass(device->GetVulkanDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "failed to create render pass!");
 		}
 
@@ -93,12 +93,16 @@ namespace Mana {
 		dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 		dynamicState.pDynamicStates = dynamicStates.data();
 
+
+		auto bindingDescription = VulkanVertexBuffer::Vertex::GetBindingDescription();
+		auto attributeDescriptions = VulkanVertexBuffer::Vertex::GetAttributeDescriptions();
+
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexBindingDescriptionCount = 0;
-		vertexInputInfo.pVertexBindingDescriptions = nullptr;
-		vertexInputInfo.vertexAttributeDescriptionCount = 0;
-		vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+		vertexInputInfo.vertexBindingDescriptionCount = 1;
+		vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -174,7 +178,7 @@ namespace Mana {
 		pipelineLayoutInfo.pushConstantRangeCount = 0;
 		pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-		if (vkCreatePipelineLayout(device->GetDevice(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
+		if (vkCreatePipelineLayout(device->GetVulkanDevice(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to create pipeline layout!");
 		}
 
@@ -196,20 +200,20 @@ namespace Mana {
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.basePipelineIndex = -1;
 
-		if (vkCreateGraphicsPipelines(device->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS) {
+		if (vkCreateGraphicsPipelines(device->GetVulkanDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS) {
 			MANA_CORE_ASSERT(false, "Failed to create graphics pipeline!");
 		}
 
-		vkDestroyShaderModule(device->GetDevice(), fragShaderModule, nullptr);
-		vkDestroyShaderModule(device->GetDevice(), vertShaderModule, nullptr);
+		vkDestroyShaderModule(device->GetVulkanDevice(), fragShaderModule, nullptr);
+		vkDestroyShaderModule(device->GetVulkanDevice(), vertShaderModule, nullptr);
 	}
 
 	void VulkanPipeline::Clean()
 	{
 		auto device = VulkanRenderAPI::GetDevice();
 
-		vkDestroyPipeline(device->GetDevice(), m_GraphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(device->GetDevice(), m_PipelineLayout, nullptr);
-		vkDestroyRenderPass(device->GetDevice(), m_RenderPass, nullptr);
+		vkDestroyPipeline(device->GetVulkanDevice(), m_GraphicsPipeline, nullptr);
+		vkDestroyPipelineLayout(device->GetVulkanDevice(), m_PipelineLayout, nullptr);
+		vkDestroyRenderPass(device->GetVulkanDevice(), m_RenderPass, nullptr);
 	}
 }

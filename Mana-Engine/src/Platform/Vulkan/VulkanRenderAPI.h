@@ -37,18 +37,21 @@ namespace Mana {
 		inline static Ref<VulkanSwapChain> GetCurrentSwapchain() { return Get()->m_SwapChain; }
 		inline static Ref<VulkanPipeline> GetCurrentPipeline() { return Get()->m_RenderPipeline; }
 		inline static Ref<VulkanFrameBuffer> GetCurrentFrameBuffer() { return Get()->m_FrameBuffer; }
+		inline static std::vector<Ref<VulkanVertexBuffer>> GetVertexBuffers() { return Get()->m_VertexBuffers; }
 	private:
 		void CreateInstance();
 		void InitDebugMessanger();
-		
-		
+
+
 		bool CheckValidationLayerSupport();
 		std::vector<const char*> GetRequiredExtensions();
-		
-		
+
+
 	private:
 		inline static VkInstance s_Instance = VK_NULL_HANDLE;
 		VkDebugUtilsMessengerEXT m_DebugMessenger = VK_NULL_HANDLE;
+
+		std::vector<Ref<VulkanVertexBuffer>> m_VertexBuffers;
 
 		Ref<VulkanPhysicalDevice> m_PhysicalDevice = std::make_shared<VulkanPhysicalDevice>();
 		Ref<VulkanLogicalDevice> m_Device = std::make_shared<VulkanLogicalDevice>();
